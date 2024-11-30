@@ -1,4 +1,6 @@
+import "package:bookfinder_app/extensions/navigation.dart";
 import "package:bookfinder_app/extensions/theming.dart";
+import "package:bookfinder_app/screens/authentication/login_screen.dart";
 import "package:flutter/material.dart";
 
 class WelcomeScreen extends StatelessWidget {
@@ -9,7 +11,7 @@ class WelcomeScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(32),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -59,6 +61,9 @@ class WelcomeScreen extends StatelessWidget {
   }
 
   void goToLogin(BuildContext context) {
-    // TODO: Implement login screen navigation
+    context.navigateTo(
+      const LoginScreen(),
+      animation: TransitionAnimationType.sharedAxisX,
+    );
   }
 }
