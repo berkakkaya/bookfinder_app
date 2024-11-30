@@ -1,4 +1,5 @@
 import "package:bookfinder_app/consts/colors.dart";
+import "package:bookfinder_app/extensions/theming.dart";
 import "package:bookfinder_app/screens/init_screen.dart";
 import "package:flutter/material.dart";
 import "package:google_fonts/google_fonts.dart";
@@ -30,7 +31,33 @@ class MyApp extends StatelessWidget {
             shape: WidgetStatePropertyAll(RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             )),
+            textStyle: WidgetStatePropertyAll(
+              context.theme.textTheme.bodyLarge,
+            ),
+            overlayColor: const WidgetStatePropertyAll(Colors.white30),
           ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 16,
+          ),
+          filled: true,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(
+              color: colorBlack,
+              width: 2,
+            ),
+          ),
+          floatingLabelStyle: context.theme.textTheme.bodyLarge,
+          fillColor: colorWhite,
         ),
       ),
       home: const InitScreen(),
