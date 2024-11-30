@@ -25,7 +25,7 @@ class _Register2ScreenState extends State<Register2Screen> {
       body: CustomScrollView(
         slivers: [
           const SliverAppBar.large(
-            title: Text("Kayıt Ol"),
+            title: Text("Bir şifre oluşturunuz"),
             centerTitle: true,
             floating: true,
             snap: true,

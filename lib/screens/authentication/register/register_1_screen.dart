@@ -20,7 +20,7 @@ class _Register1ScreenState extends State<Register1Screen> {
       body: CustomScrollView(
         slivers: [
           const SliverAppBar.large(
-            title: Text("Kayıt Ol"),
+            title: Text("Bilgilerinizi giriniz"),
             centerTitle: true,
             floating: true,
             snap: true,
