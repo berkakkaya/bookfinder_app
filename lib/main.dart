@@ -25,7 +25,15 @@ class MyApp extends StatelessWidget {
         ),
         filledButtonTheme: FilledButtonThemeData(
           style: ButtonStyle(
-            backgroundColor: const WidgetStatePropertyAll(colorLightBlack),
+            backgroundColor: WidgetStateProperty.resolveWith(
+              (states) {
+                if (states.contains(WidgetState.disabled)) {
+                  return colorGray;
+                }
+
+                return colorLightBlack;
+              },
+            ),
             foregroundColor: const WidgetStatePropertyAll(colorBackground),
             padding: const WidgetStatePropertyAll(EdgeInsets.all(16)),
             shape: WidgetStatePropertyAll(RoundedRectangleBorder(
