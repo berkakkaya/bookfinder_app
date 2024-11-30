@@ -1,3 +1,5 @@
+import "package:bookfinder_app/extensions/navigation.dart";
+import "package:bookfinder_app/screens/authentication/welcome_screen.dart";
 import "package:flutter/material.dart";
 
 class InitScreen extends StatefulWidget {
@@ -29,5 +31,7 @@ class _InitScreenState extends State<InitScreen> {
     );
   }
 
-  Future<void> initApp() async {}
+  Future<void> initApp() async {
+    context.navigateTo(const WelcomeScreen());
+  }
 }

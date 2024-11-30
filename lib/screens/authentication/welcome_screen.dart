@@ -1,3 +1,4 @@
+import "package:bookfinder_app/extensions/theming.dart";
 import "package:flutter/material.dart";
 
 class WelcomeScreen extends StatelessWidget {
@@ -5,10 +6,59 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text("Welcome to Bookfinder"),
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Text(
+                "Bookfinder",
+                style: context.theme.textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                "Kendine yeni kitaplar keşfet",
+                style: context.theme.textTheme.displaySmall,
+              ),
+              const Spacer(),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(
+                    child: FilledButton.icon(
+                      label: const Text("Kayıt Ol"),
+                      icon: const Icon(Icons.app_registration_rounded),
+                      onPressed: () => goToRegister(context),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: FilledButton.icon(
+                      label: const Text("Giriş Yap"),
+                      icon: const Icon(Icons.login_rounded),
+                      onPressed: () => goToLogin(context),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
+  }
+
+  void goToRegister(BuildContext context) {
+    // TODO: Implement register screen navigation
+  }
+
+  void goToLogin(BuildContext context) {
+    // TODO: Implement login screen navigation
   }
 }
