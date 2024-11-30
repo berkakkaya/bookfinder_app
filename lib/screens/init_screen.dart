@@ -32,6 +32,6 @@ class _InitScreenState extends State<InitScreen> {
   }
 
   Future<void> initApp() async {
-    context.navigateTo(const WelcomeScreen());
+    context.navigateToAndRemoveUntil(const WelcomeScreen());
   }
 }
