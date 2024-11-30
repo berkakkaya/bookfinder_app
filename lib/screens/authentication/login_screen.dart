@@ -9,16 +9,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-
-    super.dispose();
-  }
+  String email = "";
+  String password = "";
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
           SliverFillRemaining(
             hasScrollBody: false,
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -43,27 +35,37 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   const Spacer(),
                   TextField(
-                    controller: emailController,
                     decoration: const InputDecoration(
                       labelText: "E-posta",
                       prefixIcon: Icon(Icons.email_outlined),
                     ),
                     keyboardType: TextInputType.emailAddress,
+                    onChanged: (value) {
+                      setState(() {
+                        email = value;
+                      });
+                    },
                   ),
                   const SizedBox(height: 16),
                   TextField(
-                    controller: passwordController,
                     decoration: const InputDecoration(
                       labelText: "Şifre",
                       hintText: "Şifrenizi girin",
                       prefixIcon: Icon(Icons.lock_outlined),
                     ),
                     obscureText: true,
+                    onChanged: (value) {
+                      setState(() {
+                        password = value;
+                      });
+                    },
                   ),
                   // const SizedBox(height: 32),
                   const Spacer(),
                   FilledButton(
-                    onPressed: () => login(context),
+                    onPressed: email.isEmpty || password.isEmpty
+                        ? null
+                        : () => login(context),
                     child: const Text("Giriş Yap"),
                   ),
                 ],
@@ -76,9 +78,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> login(BuildContext context) async {
-    final email = emailController.text;
-    final password = passwordController.text;
-
     // TODO: Implement login logic
   }
 }
