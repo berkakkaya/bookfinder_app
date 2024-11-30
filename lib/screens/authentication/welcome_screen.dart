@@ -1,6 +1,7 @@
 import "package:bookfinder_app/extensions/navigation.dart";
 import "package:bookfinder_app/extensions/theming.dart";
 import "package:bookfinder_app/screens/authentication/login_screen.dart";
+import "package:bookfinder_app/screens/authentication/register/register_1_screen.dart";
 import "package:flutter/material.dart";
 
 class WelcomeScreen extends StatelessWidget {
@@ -57,7 +58,10 @@ class WelcomeScreen extends StatelessWidget {
   }
 
   void goToRegister(BuildContext context) {
-    // TODO: Implement register screen navigation
+    context.navigateTo(
+      const Register1Screen(),
+      animation: TransitionAnimationType.sharedAxisX,
+    );
   }
 
   void goToLogin(BuildContext context) {
