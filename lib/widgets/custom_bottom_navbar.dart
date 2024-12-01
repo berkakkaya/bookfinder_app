@@ -66,14 +66,14 @@ class CustomBottomNavbar extends StatelessWidget {
               icon: const Icon(Icons.arrow_back_rounded),
               onPressed: () => context.navigateBack(),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 8),
           ],
           _PrimaryItemChip(
             currentItem: selectedItem,
             label: label,
           ),
           const Spacer(),
-          if (!disableSubpageSelections) ...[
+          if (!backButtonEnabled && !disableSubpageSelections) ...[
             IconButton(
               icon: const Icon(CustomIcons.homeOutlineRounded),
               tooltip: "Ana Sayfa",
