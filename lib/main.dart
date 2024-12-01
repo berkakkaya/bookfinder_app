@@ -1,4 +1,5 @@
 import "package:bookfinder_app/consts/colors.dart";
+import "package:bookfinder_app/consts/navigator_key.dart";
 import "package:bookfinder_app/extensions/theming.dart";
 import "package:bookfinder_app/screens/init_screen.dart";
 import "package:flutter/material.dart";
@@ -68,6 +69,7 @@ class MyApp extends StatelessWidget {
           fillColor: colorWhite,
         ),
       ),
+      navigatorKey: navigatorKey,
       home: const InitScreen(),
     );
   }
