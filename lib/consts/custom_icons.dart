@@ -7,6 +7,8 @@ class CustomIcons {
 
   static const String _fontFamily = "CustomIcons";
 
+  static const IconData homeOutlineRounded =
+      IconData(0xe908, fontFamily: _fontFamily);
   static const IconData book5OutlineRounded =
       IconData(0xe900, fontFamily: _fontFamily);
   static const IconData book5Rounded =
