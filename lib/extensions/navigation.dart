@@ -4,6 +4,7 @@ import "package:flutter/material.dart";
 enum TransitionAnimationType {
   plain,
   sharedAxisX,
+  fadeThrough,
 }
 
 PageRouteBuilder<T> _buildSharedAxisXRouteBuilder<T>(Widget screen) {
@@ -20,6 +21,19 @@ PageRouteBuilder<T> _buildSharedAxisXRouteBuilder<T>(Widget screen) {
   );
 }
 
+PageRouteBuilder<T> _buildFadeThroughRouteBuilder<T>(Widget screen) {
+  return PageRouteBuilder<T>(
+    pageBuilder: (context, animation, secondaryAnimation) => screen,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeThroughTransition(
+        animation: animation,
+        secondaryAnimation: secondaryAnimation,
+        child: child,
+      );
+    },
+  );
+}
+
 extension NavigationExt on BuildContext {
   Future<T?> navigateTo<T>(
     Widget screen, {
@@ -28,7 +42,10 @@ extension NavigationExt on BuildContext {
     final Route<T> route = switch (animation) {
       TransitionAnimationType.sharedAxisX =>
         _buildSharedAxisXRouteBuilder(screen),
-      _ => MaterialPageRoute(builder: (_) => screen),
+      TransitionAnimationType.fadeThrough =>
+        _buildFadeThroughRouteBuilder(screen),
+      TransitionAnimationType.plain =>
+        MaterialPageRoute(builder: (_) => screen),
     };
 
     return Navigator.of(this).push<T>(route);
@@ -41,7 +58,10 @@ extension NavigationExt on BuildContext {
     final Route<T> route = switch (animation) {
       TransitionAnimationType.sharedAxisX =>
         _buildSharedAxisXRouteBuilder<T>(screen),
-      _ => MaterialPageRoute(builder: (_) => screen),
+      TransitionAnimationType.fadeThrough =>
+        _buildFadeThroughRouteBuilder<T>(screen),
+      TransitionAnimationType.plain =>
+        MaterialPageRoute(builder: (_) => screen),
     };
 
     return Navigator.of(this).pushAndRemoveUntil<T>(route, (_) => false);
@@ -54,7 +74,10 @@ extension NavigationExt on BuildContext {
     final Route<T> route = switch (animation) {
       TransitionAnimationType.sharedAxisX =>
         _buildSharedAxisXRouteBuilder<T>(screen),
-      _ => MaterialPageRoute(builder: (_) => screen),
+      TransitionAnimationType.fadeThrough =>
+        _buildFadeThroughRouteBuilder<T>(screen),
+      TransitionAnimationType.plain =>
+        MaterialPageRoute(builder: (_) => screen),
     };
 
     return Navigator.of(this).pushReplacement<T, TO>(route);
