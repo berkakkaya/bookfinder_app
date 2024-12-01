@@ -1,4 +1,6 @@
 import "package:bookfinder_app/consts/colors.dart";
+import "package:bookfinder_app/extensions/navigation.dart";
+import "package:bookfinder_app/screens/authentication/login_screen.dart";
 import "package:flutter/material.dart";
 
 class Register2Screen extends StatefulWidget {
@@ -86,5 +88,7 @@ class _Register2ScreenState extends State<Register2Screen> {
 
   Future<void> register(BuildContext context) async {
     // TODO: Handle registration logic
+
+    context.navigateToAndRemoveUntil(const LoginScreen());
   }
 }

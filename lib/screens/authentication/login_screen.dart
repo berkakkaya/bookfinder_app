@@ -1,4 +1,6 @@
 import "package:bookfinder_app/consts/colors.dart";
+import "package:bookfinder_app/extensions/navigation.dart";
+import "package:bookfinder_app/screens/home_screen.dart";
 import "package:flutter/material.dart";
 
 class LoginScreen extends StatefulWidget {
@@ -79,5 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> login(BuildContext context) async {
     // TODO: Implement login logic
+
+    context.navigateToAndRemoveUntil(const HomeScreen());
   }
 }
