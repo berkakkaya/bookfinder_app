@@ -15,6 +15,7 @@ enum CustomBottomNavbarItem {
 class CustomBottomNavbar extends StatelessWidget {
   final CustomBottomNavbarItem selectedItem;
   final String? customTitle;
+  final Icon? customIcon;
   final bool? overrideBackButtonEnabled;
   final bool disableSubpageSelections;
   final void Function(CustomBottomNavbarItem)? onItemSelected;
@@ -23,6 +24,7 @@ class CustomBottomNavbar extends StatelessWidget {
     super.key,
     required this.selectedItem,
     this.customTitle,
+    this.customIcon,
     this.overrideBackButtonEnabled,
     this.disableSubpageSelections = false,
     this.onItemSelected,
@@ -71,6 +73,7 @@ class CustomBottomNavbar extends StatelessWidget {
           _PrimaryItemChip(
             currentItem: selectedItem,
             label: label,
+            customIcon: customIcon,
           ),
           const Spacer(),
           if (!backButtonEnabled && !disableSubpageSelections) ...[
@@ -112,21 +115,25 @@ class CustomBottomNavbar extends StatelessWidget {
 class _PrimaryItemChip extends StatelessWidget {
   final CustomBottomNavbarItem currentItem;
   final String label;
+  final Icon? customIcon;
 
   const _PrimaryItemChip({
     required this.currentItem,
     required this.label,
+    this.customIcon,
   });
 
   @override
   Widget build(BuildContext context) {
-    final Icon icon = switch (currentItem) {
-      CustomBottomNavbarItem.home => const Icon(Icons.home_rounded),
-      CustomBottomNavbarItem.explore =>
-        const Icon(CustomIcons.overviewKeyRounded),
-      CustomBottomNavbarItem.library => const Icon(CustomIcons.book5Rounded),
-      CustomBottomNavbarItem.profile => const Icon(Icons.person_rounded),
-    };
+    final Icon icon = customIcon ??
+        switch (currentItem) {
+          CustomBottomNavbarItem.home => const Icon(Icons.home_rounded),
+          CustomBottomNavbarItem.explore =>
+            const Icon(CustomIcons.overviewKeyRounded),
+          CustomBottomNavbarItem.library =>
+            const Icon(CustomIcons.book5Rounded),
+          CustomBottomNavbarItem.profile => const Icon(Icons.person_rounded),
+        };
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
