@@ -68,6 +68,19 @@ class MyApp extends StatelessWidget {
           floatingLabelStyle: context.theme.textTheme.bodyLarge,
           fillColor: colorWhite,
         ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: colorLightBlack,
+          foregroundColor: colorWhite,
+          splashColor: Colors.white30,
+        ),
+        snackBarTheme: const SnackBarThemeData(
+          backgroundColor: colorGray,
+          contentTextStyle: TextStyle(
+            color: colorWhite,
+            fontSize: 16,
+          ),
+          closeIconColor: colorWhite,
+        ),
       ),
       navigatorKey: navigatorKey,
       home: const InitScreen(),
