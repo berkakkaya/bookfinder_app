@@ -1,7 +1,7 @@
 import "package:dio/dio.dart";
 import "package:shared_preferences/shared_preferences.dart";
 
-abstract class BaseApiService {
+class BaseApiService {
   static Dio? _dio;
 
   static Dio get dio {
