@@ -16,7 +16,7 @@ class BaseApiService {
   ///
   /// Returns `true` if the base URI was successfully initialized,
   /// and `false` otherwise.
-  static Future<bool> init(Uri? baseUri) async {
+  static Future<bool> init([Uri? baseUri]) async {
     final preferences = SharedPreferencesAsync();
 
     // Load the base URI from the shared preferences if it's not provided
