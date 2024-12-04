@@ -1,4 +1,3 @@
-import "package:animations/animations.dart";
 import "package:bookfinder_app/screens/home_screen_tabs/explore_tab.dart";
 import "package:bookfinder_app/screens/home_screen_tabs/homepage_tab.dart";
 import "package:bookfinder_app/screens/home_screen_tabs/library_tab.dart";
