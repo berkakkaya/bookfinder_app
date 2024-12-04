@@ -1,6 +1,9 @@
 import "package:bookfinder_app/consts/colors.dart";
 import "package:bookfinder_app/extensions/navigation.dart";
+import "package:bookfinder_app/extensions/snackbars.dart";
+import "package:bookfinder_app/models/api_response.dart";
 import "package:bookfinder_app/screens/home_screen.dart";
+import "package:bookfinder_app/services/api/api_service_auth.dart";
 import "package:flutter/material.dart";
 
 class LoginScreen extends StatefulWidget {
@@ -65,9 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   // const SizedBox(height: 32),
                   const Spacer(),
                   FilledButton(
-                    onPressed: email.isEmpty || password.isEmpty
-                        ? null
-                        : () => login(context),
+                    onPressed: email.isEmpty || password.isEmpty ? null : login,
                     child: const Text("Giriş Yap"),
                   ),
                 ],
@@ -79,9 +80,33 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Future<void> login(BuildContext context) async {
-    // TODO: Implement login logic
+  Future<void> login() async {
+    final result = await ApiServiceAuth.login(email, password);
 
-    context.navigateToAndRemoveUntil(const HomeScreen());
+    if (result.status == ResponseStatus.unauthorized) {
+      if (mounted) {
+        context.showSnackbar(
+          "E-posta veya şifre hatalı.",
+          type: SnackbarType.warning,
+        );
+      }
+
+      return;
+    }
+
+    if (result.status != ResponseStatus.ok) {
+      if (mounted) {
+        context.showSnackbar(
+          "Bir hata oluştu. Lütfen tekrar deneyin.",
+          type: SnackbarType.error,
+        );
+      }
+
+      return;
+    }
+
+    if (mounted) {
+      context.navigateToAndRemoveUntil(const HomeScreen());
+    }
   }
 }

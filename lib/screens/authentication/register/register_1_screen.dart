@@ -41,6 +41,8 @@ class _Register1ScreenState extends State<Register1Screen> {
                       labelText: "Adınız ve Soyadınız",
                       prefixIcon: Icon(Icons.person_outline_outlined),
                     ),
+                    keyboardType: TextInputType.name,
+                    textCapitalization: TextCapitalization.words,
                     onChanged: (value) {
                       setState(() {
                         nameSurname = value;

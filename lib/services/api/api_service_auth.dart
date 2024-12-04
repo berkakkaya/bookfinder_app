@@ -39,12 +39,12 @@ class ApiServiceAuth extends BaseApiService {
     final dio = BaseApiService.dio;
     final preferences = SharedPreferencesAsync();
 
-    final response = await dio.post("/login", data: {
-      "email": email,
-      "password": password,
-    });
-
     try {
+      final response = await dio.post("/login", data: {
+        "email": email,
+        "password": password,
+      });
+
       if (response.statusCode == 200) {
         _accessToken = response.data["accessToken"];
         _refreshToken = response.data["refreshToken"];
@@ -66,11 +66,11 @@ class ApiServiceAuth extends BaseApiService {
     }
   }
 
-  static Future<ApiResponse<void>> register(
-    String nameSurname,
-    String email,
-    String password,
-  ) async {
+  static Future<ApiResponse<void>> register({
+    required String nameSurname,
+    required String email,
+    required String password,
+  }) async {
     final dio = BaseApiService.dio;
     final preferences = SharedPreferencesAsync();
 

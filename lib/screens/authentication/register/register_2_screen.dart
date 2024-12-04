@@ -1,6 +1,9 @@
 import "package:bookfinder_app/consts/colors.dart";
 import "package:bookfinder_app/extensions/navigation.dart";
-import "package:bookfinder_app/screens/authentication/login_screen.dart";
+import "package:bookfinder_app/extensions/snackbars.dart";
+import "package:bookfinder_app/models/api_response.dart";
+import "package:bookfinder_app/screens/home_screen.dart";
+import "package:bookfinder_app/services/api/api_service_auth.dart";
 import "package:flutter/material.dart";
 
 class Register2Screen extends StatefulWidget {
@@ -73,7 +76,7 @@ class _Register2ScreenState extends State<Register2Screen> {
                   FilledButton.icon(
                     onPressed: password.isEmpty || confirmPassword.isEmpty
                         ? null
-                        : () => register(context),
+                        : register,
                     label: const Text("Kayıt Ol"),
                     icon: const Icon(Icons.done_rounded),
                   ),
@@ -86,9 +89,46 @@ class _Register2ScreenState extends State<Register2Screen> {
     );
   }
 
-  Future<void> register(BuildContext context) async {
-    // TODO: Handle registration logic
+  Future<void> register() async {
+    if (password != confirmPassword) {
+      context.showSnackbar(
+        "Şifreler uyuşmuyor.",
+        type: SnackbarType.warning,
+      );
 
-    context.navigateToAndRemoveUntil(const LoginScreen());
+      return;
+    }
+
+    final result = await ApiServiceAuth.register(
+      nameSurname: widget.nameSurname,
+      email: widget.email,
+      password: password,
+    );
+
+    if (result.status == ResponseStatus.conflict) {
+      if (mounted) {
+        context.showSnackbar(
+          "Bu e-posta adresi ile bir hesap zaten var.",
+          type: SnackbarType.warning,
+        );
+      }
+
+      return;
+    }
+
+    if (result.status != ResponseStatus.created) {
+      if (mounted) {
+        context.showSnackbar(
+          "Bilinmeyen bir hata oluştu.",
+          type: SnackbarType.error,
+        );
+      }
+
+      return;
+    }
+
+    if (mounted) {
+      context.navigateToAndRemoveUntil(const HomeScreen());
+    }
   }
 }
