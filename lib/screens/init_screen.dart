@@ -1,7 +1,10 @@
 import "package:bookfinder_app/extensions/navigation.dart";
 import "package:bookfinder_app/screens/authentication/welcome_screen.dart";
+import "package:bookfinder_app/screens/home_screen.dart";
+import "package:bookfinder_app/services/api/api_service_auth.dart";
 import "package:bookfinder_app/services/api/base_api_service.dart";
 import "package:flutter/material.dart";
+import "package:shared_preferences/shared_preferences.dart";
 
 class InitScreen extends StatefulWidget {
   const InitScreen({super.key});
@@ -34,7 +37,7 @@ class _InitScreenState extends State<InitScreen> {
 
   Future<void> initApp() async {
     // Try to initialize the API service
-    bool isInitialized = await BaseApiService.init();
+    bool isInitialized = await ApiServiceAuth.init();
 
     // If the API service is failed to initialize, ask for new base
     // API URI and try again
@@ -48,7 +51,15 @@ class _InitScreenState extends State<InitScreen> {
         continue;
       }
 
-      isInitialized = await BaseApiService.init(uri);
+      isInitialized = await ApiServiceAuth.init(uri);
+    }
+
+    if (ApiServiceAuth.isAllTokensPresent) {
+      if (mounted) {
+        context.navigateToAndRemoveUntil(const HomeScreen());
+      }
+
+      return;
     }
 
     if (mounted) {

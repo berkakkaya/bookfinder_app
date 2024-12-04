@@ -25,7 +25,10 @@ class ApiServiceAuth extends BaseApiService {
     return "Bearer $_accessToken";
   }
 
-  static Future<bool> init(Uri? baseUri) async {
+  static bool get isAllTokensPresent =>
+      _accessToken != null && _refreshToken != null;
+
+  static Future<bool> init([Uri? baseUri]) async {
     final preferences = SharedPreferencesAsync();
 
     // Load the access and refresh tokens from the shared preferences
