@@ -33,6 +33,9 @@ class BaseApiService {
     final tempDio = Dio(BaseOptions(
       baseUrl: baseUri.toString(),
       validateStatus: (status) => status != null && status < 400,
+      sendTimeout: Duration(seconds: 10),
+      receiveTimeout: Duration(seconds: 10),
+      connectTimeout: Duration(seconds: 10),
     ));
 
     // Do a test request to see if the base URI is valid
