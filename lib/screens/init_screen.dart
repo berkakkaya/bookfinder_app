@@ -3,6 +3,7 @@ import "package:bookfinder_app/extensions/navigation.dart";
 import "package:bookfinder_app/screens/authentication/welcome_screen.dart";
 import "package:bookfinder_app/screens/home_screen.dart";
 import "package:bookfinder_app/services/api/api_service_provider.dart";
+import "package:bookfinder_app/services/logging/logging_service_provider.dart";
 import "package:bookfinder_app/services/preferences/preference_service_provider.dart";
 import "package:flutter/material.dart";
 
@@ -36,6 +37,12 @@ class _InitScreenState extends State<InitScreen> {
   }
 
   Future<void> initApp() async {
+    // Initialize the logging service
+    LoggingServiceProvider.initTalker();
+
+    // Get the Dio logger from the logging service
+    final dioLogInterceptor = LoggingServiceProvider.dioInterceptor;
+
     // Initialize the preference service
     PreferenceServiceProvider.initActual();
     final prefs = PreferenceServiceProvider.i;
@@ -51,8 +58,8 @@ class _InitScreenState extends State<InitScreen> {
         await ApiServiceProvider.initDio(
           baseUri: baseUri,
           tokens: null,
+          interceptors: dioLogInterceptor != null ? [dioLogInterceptor] : null,
         );
-
         isInitialized = true;
       } on ApiUnreachableException {
         // If the API service is unreachable, unset the base URI
@@ -77,6 +84,7 @@ class _InitScreenState extends State<InitScreen> {
         await ApiServiceProvider.initDio(
           baseUri: baseUri,
           tokens: null,
+          interceptors: dioLogInterceptor != null ? [dioLogInterceptor] : null,
         );
 
         // If the initialization is successful, save the base URI

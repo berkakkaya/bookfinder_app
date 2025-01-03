@@ -35,6 +35,7 @@ class DioApiService extends ApiService {
   static Future<DioApiService> createInstance({
     required Uri baseUri,
     required TokenPair? tokens,
+    List<Interceptor>? interceptors,
   }) async {
     // Create a temporary Dio instance to test the base URI
     final tempDio = Dio(BaseOptions(
@@ -49,6 +50,11 @@ class DioApiService extends ApiService {
 
     if (!isApiHealthy) {
       throw ApiUnreachableException("Cannot reach the API at $baseUri");
+    }
+
+    // Add the interceptors to the temporary Dio instance
+    if (interceptors != null) {
+      tempDio.interceptors.addAll(interceptors);
     }
 
     return DioApiService._(dio: tempDio, tokens: tokens);
