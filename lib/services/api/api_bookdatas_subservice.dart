@@ -6,7 +6,7 @@ typedef SearchResults = List<Map<String, dynamic>>;
 typedef BookData = Map<String, dynamic>;
 
 class ApiBookdatasSubservice {
-  Future<ApiResponse<SearchResults>> searchBooks(
+  static Future<ApiResponse<SearchResults>> searchBooks(
     String query, {
     required String authHeader,
   }) async {
@@ -34,7 +34,7 @@ class ApiBookdatasSubservice {
     }
   }
 
-  Future<ApiResponse<BookData>> getBookData(
+  static Future<ApiResponse<BookData>> getBookData(
     String bookId, {
     required String authHeader,
   }) async {
