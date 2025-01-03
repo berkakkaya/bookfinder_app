@@ -7,6 +7,7 @@ import "package:bookfinder_app/models/token_pair.dart";
 import "package:bookfinder_app/services/api/dio_imp/api_bookdatas_subservice.dart";
 import "package:bookfinder_app/services/api/dio_imp/api_recommendations_subservice.dart";
 import "package:bookfinder_app/services/api/dio_imp/api_auth_subservice.dart";
+import "package:bookfinder_app/services/logging/logging_service_provider.dart";
 import "package:dio/dio.dart";
 
 class DioApiService extends ApiService {
@@ -67,10 +68,27 @@ class DioApiService extends ApiService {
 
   static Future<bool> _checkHealthOfDio(Dio dio) async {
     try {
-      final response = await dio.get("/health");
+      final response = await dio.get("/");
 
-      return response.statusCode == 200;
-    } on DioException {
+      if (response.statusCode == 200) {
+        LoggingServiceProvider.instance
+            .info("API check has been completed successfully.");
+
+        return true;
+      }
+
+      LoggingServiceProvider.instance.warning(
+        "API healthcheck failed. API returned status code ${response.statusCode}",
+      );
+
+      return false;
+    } on DioException catch (e) {
+      LoggingServiceProvider.instance.warning(
+        "API healthcheck failed.",
+        exception: e,
+        stackTrace: e.stackTrace,
+      );
+
       return false;
     }
   }
