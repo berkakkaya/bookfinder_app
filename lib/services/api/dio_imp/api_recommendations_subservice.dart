@@ -1,17 +1,20 @@
+import "package:bookfinder_app/interfaces/api/api_recommendations_subservice.dart";
 import "package:bookfinder_app/models/api_response.dart";
-import "package:bookfinder_app/services/api/base_api_service.dart";
 import "package:dio/dio.dart";
 
 typedef RecommendationData = List<Map<String, dynamic>>;
 
-class ApiRecommendationsSubservice {
-  static Future<ApiResponse<RecommendationData>> getRecommendations({
+class DioApiRecommendationsSubservice implements ApiRecommendationsSubservice {
+  final Dio _dio;
+
+  DioApiRecommendationsSubservice(this._dio);
+
+  @override
+  Future<ApiResponse<RecommendationData>> getRecommendations({
     required String authHeader,
   }) async {
-    final dio = BaseApiService.dio;
-
     try {
-      final response = await dio.get(
+      final response = await _dio.get(
         "/recommendations",
         options: Options(headers: {"Authorization": authHeader}),
       );
