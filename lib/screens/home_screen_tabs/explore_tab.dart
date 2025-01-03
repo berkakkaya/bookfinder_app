@@ -3,8 +3,8 @@ import "package:bookfinder_app/consts/custom_icons.dart";
 import "package:bookfinder_app/extensions/snackbars.dart";
 import "package:bookfinder_app/extensions/theming.dart";
 import "package:bookfinder_app/models/api_response.dart";
-import "package:bookfinder_app/services/api/api_recommendations_subservice.dart";
-import "package:bookfinder_app/services/api/api_service_auth.dart";
+import "package:bookfinder_app/services/api/api_service_provider.dart";
+import "package:bookfinder_app/utils/auth_utils.dart" as auth_utils;
 import "package:flutter/material.dart";
 
 class ExploreTab extends StatefulWidget {
@@ -157,8 +157,8 @@ class _ExploreTabState extends State<ExploreTab> {
   }
 
   Future<void> getRecommendations() async {
-    final result = await ApiServiceAuth.reqWithAuthCheck(
-      (authHeader) => ApiRecommendationsSubservice.getRecommendations(
+    final result = await auth_utils.withAuth(
+      (authHeader) => ApiServiceProvider.i.recommendations.getRecommendations(
         authHeader: authHeader,
       ),
     );

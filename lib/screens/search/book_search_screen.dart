@@ -2,8 +2,8 @@ import "dart:async";
 
 import "package:bookfinder_app/extensions/snackbars.dart";
 import "package:bookfinder_app/models/api_response.dart";
-import "package:bookfinder_app/services/api/api_bookdatas_subservice.dart";
-import "package:bookfinder_app/services/api/api_service_auth.dart";
+import "package:bookfinder_app/services/api/api_service_provider.dart";
+import "package:bookfinder_app/utils/auth_utils.dart" as auth_utils;
 import "package:bookfinder_app/widgets/custom_bottom_navbar.dart";
 import "package:flutter/material.dart";
 
@@ -158,8 +158,8 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
       isSearching = true;
     });
 
-    final result = await ApiServiceAuth.reqWithAuthCheck(
-      (authHeader) => ApiBookdatasSubservice.searchBooks(
+    final result = await auth_utils.withAuth(
+      (authHeader) => ApiServiceProvider.i.bookDatas.searchBooks(
         value,
         authHeader: authHeader,
       ),

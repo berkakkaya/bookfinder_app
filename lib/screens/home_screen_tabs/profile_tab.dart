@@ -1,6 +1,6 @@
 import "package:bookfinder_app/consts/colors.dart";
 import "package:bookfinder_app/extensions/theming.dart";
-import "package:bookfinder_app/services/api/api_service_auth.dart";
+import "package:bookfinder_app/utils/auth_utils.dart";
 import "package:flutter/material.dart";
 
 class ProfileTab extends StatefulWidget {
@@ -54,7 +54,7 @@ class _ProfileTabState extends State<ProfileTab> {
 
     if (result == true) {
       // Log out the user
-      ApiServiceAuth.logout();
+      await logout();
     }
   }
 }

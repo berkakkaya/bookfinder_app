@@ -1,7 +1,9 @@
+import "package:bookfinder_app/exceptions/api_error_handling.dart";
 import "package:bookfinder_app/extensions/navigation.dart";
 import "package:bookfinder_app/screens/authentication/welcome_screen.dart";
 import "package:bookfinder_app/screens/home_screen.dart";
-import "package:bookfinder_app/services/api/api_service_auth.dart";
+import "package:bookfinder_app/services/api/api_service_provider.dart";
+import "package:bookfinder_app/services/preferences/preference_service_provider.dart";
 import "package:flutter/material.dart";
 
 class InitScreen extends StatefulWidget {
@@ -34,8 +36,29 @@ class _InitScreenState extends State<InitScreen> {
   }
 
   Future<void> initApp() async {
-    // Try to initialize the API service
-    bool isInitialized = await ApiServiceAuth.init();
+    // Initialize the preference service
+    PreferenceServiceProvider.initActual();
+    final prefs = PreferenceServiceProvider.i;
+
+    // Get the base API URI from the preferences
+    Uri? baseUri = await prefs.getBaseUri();
+
+    bool isInitialized = false;
+
+    if (baseUri != null) {
+      // Try to initialize the API service
+      try {
+        await ApiServiceProvider.initDio(
+          baseUri: baseUri,
+          tokens: null,
+        );
+
+        isInitialized = true;
+      } on ApiUnreachableException {
+        // If the API service is unreachable, unset the base URI
+        await prefs.setBaseUri(null);
+      }
+    }
 
     // If the API service is failed to initialize, ask for new base
     // API URI and try again
@@ -44,15 +67,30 @@ class _InitScreenState extends State<InitScreen> {
         return;
       }
 
-      final uri = await showBaseUriDialog();
-      if (uri == null) {
+      baseUri = await showBaseUriDialog();
+      if (baseUri == null) {
         continue;
       }
 
-      isInitialized = await ApiServiceAuth.init(uri);
+      // Try to initialize the API service with the new base URI
+      try {
+        await ApiServiceProvider.initDio(
+          baseUri: baseUri,
+          tokens: null,
+        );
+
+        // If the initialization is successful, save the base URI
+        await prefs.setBaseUri(baseUri);
+        isInitialized = true;
+      } on ApiUnreachableException {
+        isInitialized = false;
+      }
     }
 
-    if (ApiServiceAuth.isAllTokensPresent) {
+    // Try to get the tokens from the preferences
+    final tokens = await prefs.getTokens();
+
+    if (tokens != null) {
       if (mounted) {
         context.navigateToAndRemoveUntil(const HomeScreen());
       }

@@ -3,7 +3,7 @@ import "package:bookfinder_app/extensions/navigation.dart";
 import "package:bookfinder_app/extensions/snackbars.dart";
 import "package:bookfinder_app/models/api_response.dart";
 import "package:bookfinder_app/screens/home_screen.dart";
-import "package:bookfinder_app/services/api/api_service_auth.dart";
+import "package:bookfinder_app/utils/auth_utils.dart" as auth_utils;
 import "package:flutter/material.dart";
 
 class Register2Screen extends StatefulWidget {
@@ -99,7 +99,7 @@ class _Register2ScreenState extends State<Register2Screen> {
       return;
     }
 
-    final result = await ApiServiceAuth.register(
+    final result = await auth_utils.register(
       nameSurname: widget.nameSurname,
       email: widget.email,
       password: password,
