@@ -1,5 +1,12 @@
+import "package:bookfinder_app/models/api_response.dart";
+
 abstract class ApiAuthSubservice {
-  Future<String> login(String username, String password);
-  Future<String> register(String username, String password);
-  Future<void> logout(String authHeader);
+  Future<ApiResponse<void>> login(String email, String password);
+  Future<ApiResponse<void>> register({
+    required String nameSurname,
+    required String email,
+    required String password,
+  });
+  Future<ApiResponse<void>> refreshAccessToken();
+  Future<void> logout();
 }
