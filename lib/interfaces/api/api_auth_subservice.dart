@@ -5,6 +5,15 @@ abstract class ApiAuthSubservice {
   /// Returns the current token pair state.
   TokenPair? get tokenPairState;
 
+  /// Sets the token pair state to [tokenPair].
+  ///
+  /// This method is used to set the token pair state when the app is
+  /// initialized with the token pair. In other situations, it is not
+  /// recommended to use this method to update the token pair state.
+  /// Use [login], [register], [refreshAccessToken] or [logout] methods
+  /// to update the token pair state.
+  void setTokenPair(TokenPair tokenPair);
+
   /// Logs in the user with given [email] and [password].
   ///
   /// Returns the token pair if the login is successful.
