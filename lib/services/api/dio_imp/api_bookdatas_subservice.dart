@@ -1,19 +1,22 @@
+import "package:bookfinder_app/interfaces/api/api_bookdatas_subservice.dart";
 import "package:bookfinder_app/models/api_response.dart";
-import "package:bookfinder_app/services/api/base_api_service.dart";
 import "package:dio/dio.dart";
 
 typedef SearchResults = List<Map<String, dynamic>>;
 typedef BookData = Map<String, dynamic>;
 
-class ApiBookdatasSubservice {
-  static Future<ApiResponse<SearchResults>> searchBooks(
+class DioApiBookdatasSubservice implements ApiBookdatasSubservice {
+  final Dio _dio;
+
+  DioApiBookdatasSubservice(this._dio);
+
+  @override
+  Future<ApiResponse<SearchResults>> searchBooks(
     String query, {
     required String authHeader,
   }) async {
-    final dio = BaseApiService.dio;
-
     try {
-      final response = await dio.get(
+      final response = await _dio.get(
         "/bookSearch",
         queryParameters: {"q": query},
         options: Options(headers: {"Authorization": authHeader}),
@@ -34,14 +37,13 @@ class ApiBookdatasSubservice {
     }
   }
 
-  static Future<ApiResponse<BookData>> getBookData(
+  @override
+  Future<ApiResponse<BookData>> getBookData(
     String bookId, {
     required String authHeader,
   }) async {
-    final dio = BaseApiService.dio;
-
     try {
-      final response = await dio.get(
+      final response = await _dio.get(
         "/books/$bookId",
         options: Options(headers: {"Authorization": authHeader}),
       );
