@@ -170,13 +170,32 @@ class ApiServiceAuth extends BaseApiService {
       return ApiResponse(status: ResponseStatus.unauthorized);
     }
 
-    final response = await request(authHeader!);
+    ApiResponse<T> response;
+
+    try {
+      response = await request(authHeader!);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        response = ApiResponse(status: ResponseStatus.unauthorized);
+      } else {
+        rethrow;
+      }
+    }
 
     if (response.status == ResponseStatus.unauthorized) {
       final refreshResponse = await refreshAccessToken();
 
       if (refreshResponse.status == ResponseStatus.created) {
-        return await request(authHeader!);
+        try {
+          return await request(authHeader!);
+        } on DioException catch (e) {
+          if (e.response?.statusCode == 401) {
+            await logout();
+            return ApiResponse(status: ResponseStatus.unauthorized);
+          } else {
+            rethrow;
+          }
+        }
       }
 
       await logout();
