@@ -29,4 +29,18 @@ class ActualPreferenceService implements PreferenceService {
     await _prefs.setString("access_token", tokens.accessToken);
     await _prefs.setString("refresh_token", tokens.refreshToken);
   }
+
+  @override
+  Future<String?> getBaseUri() {
+    return _prefs.getString("base_uri");
+  }
+
+  @override
+  Future<void> setBaseUri(String? uri) {
+    if (uri == null) {
+      return _prefs.remove("base_uri");
+    }
+
+    return _prefs.setString("base_uri", uri);
+  }
 }
