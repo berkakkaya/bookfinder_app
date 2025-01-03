@@ -1,3 +1,9 @@
+import "dart:async";
+
+import "package:bookfinder_app/extensions/snackbars.dart";
+import "package:bookfinder_app/models/api_response.dart";
+import "package:bookfinder_app/services/api/api_bookdatas_subservice.dart";
+import "package:bookfinder_app/services/api/api_service_auth.dart";
 import "package:bookfinder_app/widgets/custom_bottom_navbar.dart";
 import "package:flutter/material.dart";
 
@@ -14,6 +20,10 @@ class BookSearchScreen extends StatefulWidget {
 }
 
 class _BookSearchScreenState extends State<BookSearchScreen> {
+  Timer? _searchDebounce;
+  List<Map<String, dynamic>>? searchResults;
+  bool isSearching = false;
+
   @override
   void initState() {
     super.initState();
@@ -28,7 +38,54 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
   }
 
   @override
+  void dispose() {
+    _searchDebounce?.cancel();
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    late final Widget content;
+
+    if (searchResults == null) {
+      content = Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            Icon(Icons.search_rounded, size: 64, color: Colors.black38),
+            SizedBox(height: 16),
+            Text(
+              "Arama yapmak için bir şeyler yazın.",
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    } else if (searchResults!.isEmpty) {
+      content = Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            Icon(Icons.search_rounded, size: 64, color: Colors.black38),
+            SizedBox(height: 16),
+            Text(
+              "Arama sonucu bulunamadı. Lütfen başka bir şey deneyin.",
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    } else {
+      content = Column(
+        children: searchResults!.map((e) {
+          return ListTile(
+            title: Text(e["title"] as String),
+          );
+        }).toList(),
+      );
+    }
+
     return Scaffold(
       body: SafeArea(
         child: ListView(
@@ -46,13 +103,26 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
+                    suffixIcon: isSearching
+                        ? Padding(
+                            padding: const EdgeInsets.only(right: 16),
+                            child: const CircularProgressIndicator(),
+                          )
+                        : null,
+                    suffixIconConstraints: const BoxConstraints(
+                      maxHeight: 16,
+                      maxWidth: 32,
+                    ),
                   ),
                   onTapOutside: (event) {
                     widget.searchFieldFocusNode.unfocus();
                   },
+                  onChanged: _onSearchFieldChanged,
                 ),
               ),
             ),
+            const SizedBox(height: 32),
+            content,
           ],
         ),
       ),
@@ -62,5 +132,62 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
         customTitle: "Kitap Ara",
       ),
     );
+  }
+
+  void _onSearchFieldChanged(String value) {
+    if (_searchDebounce?.isActive ?? false) {
+      _searchDebounce?.cancel();
+    }
+
+    if (value.length < 3) {
+      setState(() {
+        searchResults = null;
+      });
+
+      return;
+    }
+
+    _searchDebounce = Timer(
+      const Duration(milliseconds: 300),
+      () => _onSearchFieldSubmitted(value),
+    );
+  }
+
+  Future<void> _onSearchFieldSubmitted(String value) async {
+    setState(() {
+      isSearching = true;
+    });
+
+    final result = await ApiServiceAuth.reqWithAuthCheck(
+      (authHeader) => ApiBookdatasSubservice.searchBooks(
+        value,
+        authHeader: authHeader,
+      ),
+    );
+
+    if (![ResponseStatus.ok, ResponseStatus.notFound].contains(result.status)) {
+      if (mounted) {
+        setState(() {
+          isSearching = false;
+          searchResults = null;
+        });
+
+        context.showSnackbar(
+          "Arama sırasında bir hata oluştu.",
+          type: SnackbarType.error,
+        );
+      }
+
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        isSearching = false;
+        searchResults = result.status == ResponseStatus.notFound
+            ? []
+            : result.data as List<Map<String, dynamic>>;
+      });
+    }
   }
 }
