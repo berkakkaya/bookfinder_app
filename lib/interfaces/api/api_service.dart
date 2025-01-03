@@ -6,4 +6,6 @@ abstract class ApiService {
   ApiAuthSubservice get auth;
   ApiBookdatasSubservice get bookDatas;
   ApiRecommendationsSubservice get recommendations;
+
+  Future<bool> checkApiHealth();
 }
