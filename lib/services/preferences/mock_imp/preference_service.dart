@@ -3,7 +3,7 @@ import "package:bookfinder_app/models/token_pair.dart";
 
 class MockPreferenceService extends PreferenceService {
   TokenPair? _tokens;
-  String? _baseUri;
+  Uri? _baseUri;
 
   @override
   Future<TokenPair?> getTokens() {
@@ -17,12 +17,12 @@ class MockPreferenceService extends PreferenceService {
   }
 
   @override
-  Future<String?> getBaseUri() {
+  Future<Uri?> getBaseUri() {
     return Future.value(_baseUri);
   }
 
   @override
-  Future<void> setBaseUri(String? uri) {
+  Future<void> setBaseUri(Uri? uri) {
     _baseUri = uri;
     return Future.value();
   }

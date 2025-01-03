@@ -4,6 +4,6 @@ abstract class PreferenceService {
   Future<TokenPair?> getTokens();
   Future<void> setTokens(TokenPair? tokens);
 
-  Future<String?> getBaseUri();
-  Future<void> setBaseUri(String? uri);
+  Future<Uri?> getBaseUri();
+  Future<void> setBaseUri(Uri? uri);
 }

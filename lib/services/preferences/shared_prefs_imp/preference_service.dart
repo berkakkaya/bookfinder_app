@@ -31,16 +31,22 @@ class ActualPreferenceService implements PreferenceService {
   }
 
   @override
-  Future<String?> getBaseUri() {
-    return _prefs.getString("base_uri");
+  Future<Uri?> getBaseUri() async {
+    final String? baseUri = await _prefs.getString("base_uri");
+
+    if (baseUri == null) {
+      return null;
+    }
+
+    return Uri.parse(baseUri);
   }
 
   @override
-  Future<void> setBaseUri(String? uri) {
+  Future<void> setBaseUri(Uri? uri) {
     if (uri == null) {
       return _prefs.remove("base_uri");
     }
 
-    return _prefs.setString("base_uri", uri);
+    return _prefs.setString("base_uri", uri.toString());
   }
 }
