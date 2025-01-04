@@ -10,6 +10,8 @@ class LoggingServiceProvider {
   static void initTalker() {
     final talker = TalkerFlutter.init();
     _instance = TalkerLoggingService(talker);
+
+    _instance!.info("Logging service initialized with Talker implementation");
   }
 
   static LoggingService get instance {
@@ -22,6 +24,10 @@ class LoggingServiceProvider {
     if (instance is TalkerLoggingService) {
       return TalkerDioLogger(
         talker: (instance as TalkerLoggingService).talker,
+        settings: TalkerDioLoggerSettings(
+          responseFilter: (response) =>
+              !response.requestOptions.path.contains("recommendation"),
+        ),
       );
     }
 
