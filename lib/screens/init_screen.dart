@@ -39,6 +39,7 @@ class _InitScreenState extends State<InitScreen> {
   Future<void> initApp() async {
     // Initialize the logging service
     LoggingServiceProvider.initTalker();
+    final logger = LoggingServiceProvider.instance;
 
     // Get the Dio logger from the logging service
     final dioLogInterceptor = LoggingServiceProvider.dioInterceptor;
@@ -70,6 +71,10 @@ class _InitScreenState extends State<InitScreen> {
     // If the API service is failed to initialize, ask for new base
     // API URI and try again
     while (!isInitialized) {
+      logger.warning(
+        "API service could not be initialized, asking for new base URI...",
+      );
+
       if (!mounted) {
         return;
       }
@@ -99,6 +104,10 @@ class _InitScreenState extends State<InitScreen> {
     final tokens = await prefs.getTokens();
 
     if (tokens != null) {
+      logger.info(
+        "User is already authenticated, navigating to home screen...",
+      );
+
       if (mounted) {
         context.navigateToAndRemoveUntil(const HomeScreen());
       }
@@ -107,6 +116,10 @@ class _InitScreenState extends State<InitScreen> {
     }
 
     if (mounted) {
+      logger.info(
+        "User is not authenticated, navigating to welcome screen...",
+      );
+
       context.navigateToAndRemoveUntil(const WelcomeScreen());
     }
   }
