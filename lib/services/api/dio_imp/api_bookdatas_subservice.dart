@@ -1,6 +1,7 @@
 import "package:bookfinder_app/interfaces/api/api_bookdatas_subservice.dart";
 import "package:bookfinder_app/models/api_response.dart";
 import "package:bookfinder_app/models/bookdata_models.dart";
+import "package:bookfinder_app/utils/api_utils.dart";
 import "package:dio/dio.dart";
 
 class DioApiBookdatasSubservice implements ApiBookdatasSubservice {
@@ -29,8 +30,10 @@ class DioApiBookdatasSubservice implements ApiBookdatasSubservice {
 
       return ApiResponse(status: ResponseStatus.unknownError);
     } on DioException catch (e) {
-      if (e.response?.statusCode == 404) {
-        return ApiResponse(status: ResponseStatus.notFound);
+      final responseType = parseResponseStatus(e.response?.statusCode);
+
+      if (responseType != null) {
+        return ApiResponse(status: responseType);
       }
 
       rethrow;
@@ -55,8 +58,10 @@ class DioApiBookdatasSubservice implements ApiBookdatasSubservice {
 
       return ApiResponse(status: ResponseStatus.unknownError);
     } on DioException catch (e) {
-      if (e.response?.statusCode == 404) {
-        return ApiResponse(status: ResponseStatus.notFound);
+      final responseType = parseResponseStatus(e.response?.statusCode);
+
+      if (responseType != null) {
+        return ApiResponse(status: responseType);
       }
 
       rethrow;

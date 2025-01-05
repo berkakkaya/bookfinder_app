@@ -1,6 +1,7 @@
 import "package:bookfinder_app/interfaces/api/api_recommendations_subservice.dart";
 import "package:bookfinder_app/models/api_response.dart";
 import "package:bookfinder_app/models/bookdata_models.dart";
+import "package:bookfinder_app/utils/api_utils.dart";
 import "package:dio/dio.dart";
 
 class DioApiRecommendationsSubservice implements ApiRecommendationsSubservice {
@@ -27,8 +28,10 @@ class DioApiRecommendationsSubservice implements ApiRecommendationsSubservice {
 
       return ApiResponse(status: ResponseStatus.unknownError);
     } on DioException catch (e) {
-      if (e.response?.statusCode == 401) {
-        return ApiResponse(status: ResponseStatus.unauthorized);
+      final responseType = parseResponseStatus(e.response?.statusCode);
+
+      if (responseType != null) {
+        return ApiResponse(status: responseType);
       }
 
       rethrow;

@@ -1,6 +1,7 @@
 import "package:bookfinder_app/interfaces/api/api_auth_subservice.dart";
 import "package:bookfinder_app/models/api_response.dart";
 import "package:bookfinder_app/models/token_pair.dart";
+import "package:bookfinder_app/utils/api_utils.dart";
 import "package:dio/dio.dart";
 
 class DioApiAuthSubservice extends ApiAuthSubservice {
@@ -46,12 +47,10 @@ class DioApiAuthSubservice extends ApiAuthSubservice {
         return ApiResponse(status: ResponseStatus.unknownError);
       }
     } on DioException catch (e) {
-      if (e.response?.statusCode == 401) {
-        return ApiResponse(status: ResponseStatus.unauthorized);
-      }
+      final responseType = parseResponseStatus(e.response?.statusCode);
 
-      if (e.response?.statusCode == 500) {
-        return ApiResponse(status: ResponseStatus.serverError);
+      if (responseType != null) {
+        return ApiResponse(status: responseType);
       }
 
       // Uncovered error occurred, rethrow it
@@ -86,12 +85,10 @@ class DioApiAuthSubservice extends ApiAuthSubservice {
         return ApiResponse(status: ResponseStatus.unknownError);
       }
     } on DioException catch (e) {
-      if (e.response?.statusCode == 409) {
-        return ApiResponse(status: ResponseStatus.conflict);
-      }
+      final responseType = parseResponseStatus(e.response?.statusCode);
 
-      if (e.response?.statusCode == 500) {
-        return ApiResponse(status: ResponseStatus.serverError);
+      if (responseType != null) {
+        return ApiResponse(status: responseType);
       }
 
       // Uncovered error occurred, rethrow it
@@ -127,12 +124,10 @@ class DioApiAuthSubservice extends ApiAuthSubservice {
         return ApiResponse(status: ResponseStatus.unknownError);
       }
     } on DioException catch (e) {
-      if (e.response?.statusCode == 401) {
-        return ApiResponse(status: ResponseStatus.unauthorized);
-      }
+      final responseType = parseResponseStatus(e.response?.statusCode);
 
-      if (e.response?.statusCode == 500) {
-        return ApiResponse(status: ResponseStatus.serverError);
+      if (responseType != null) {
+        return ApiResponse(status: responseType);
       }
 
       // Uncovered error occurred, rethrow it
