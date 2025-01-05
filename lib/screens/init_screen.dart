@@ -39,7 +39,7 @@ class _InitScreenState extends State<InitScreen> {
   Future<void> initApp() async {
     // Initialize the logging service
     LoggingServiceProvider.initTalker();
-    final logger = LoggingServiceProvider.instance;
+    final logger = LoggingServiceProvider.i;
 
     // Get the Dio logger from the logging service
     final dioLogInterceptor = LoggingServiceProvider.dioInterceptor;

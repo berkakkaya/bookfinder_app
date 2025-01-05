@@ -45,7 +45,7 @@ class ApiServiceProvider {
     List<Interceptor>? interceptors,
   }) async {
     if (_apiServiceInstance != null) {
-      LoggingServiceProvider.instance.warning(
+      LoggingServiceProvider.i.warning(
         "API service provider was already initialized, reinitializing with Dio "
         "implementation...",
       );
@@ -58,11 +58,11 @@ class ApiServiceProvider {
         interceptors: interceptors,
       );
 
-      LoggingServiceProvider.instance.info(
+      LoggingServiceProvider.i.info(
         "API service provider initialized with Dio implementation",
       );
     } on ApiUnreachableException catch (e, st) {
-      LoggingServiceProvider.instance.error(
+      LoggingServiceProvider.i.error(
         "API service provider initialization with Dio implementation failed "
         "because the URI (${baseUri.toString()}) is unreachable",
         exception: e,
@@ -77,7 +77,7 @@ class ApiServiceProvider {
 
   static void initMock() {
     if (_apiServiceInstance != null) {
-      LoggingServiceProvider.instance.warning(
+      LoggingServiceProvider.i.warning(
         "API service provider was already initialized, reinitializing with "
         "mock implementation...",
       );
@@ -85,17 +85,18 @@ class ApiServiceProvider {
 
     _apiServiceInstance = MockApiService(MockApiDb());
 
-    LoggingServiceProvider.instance.info(
+    LoggingServiceProvider.i.info(
       "API service provider initialized with mock implementation",
     );
   }
 
   /// Returns the API service instance.
   ///
-  /// NOTE: Make sure to call [initDio] before calling this method.
+  /// NOTE: Make sure to call [initDio] before calling this method. Otherwise,
+  /// it will throw a [ServiceProviderNotInitializedError].
   static ApiService get i {
     if (_apiServiceInstance == null) {
-      LoggingServiceProvider.instance.fatal(
+      LoggingServiceProvider.i.fatal(
         "API service provider must be initialized before getting the service "
         "instance!",
       );

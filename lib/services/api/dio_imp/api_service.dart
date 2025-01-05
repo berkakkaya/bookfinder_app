@@ -71,19 +71,19 @@ class DioApiService extends ApiService {
       final response = await dio.get("/");
 
       if (response.statusCode == 200) {
-        LoggingServiceProvider.instance
+        LoggingServiceProvider.i
             .info("API check has been completed successfully.");
 
         return true;
       }
 
-      LoggingServiceProvider.instance.warning(
+      LoggingServiceProvider.i.warning(
         "API healthcheck failed. API returned status code ${response.statusCode}",
       );
 
       return false;
     } on DioException catch (e) {
-      LoggingServiceProvider.instance.warning(
+      LoggingServiceProvider.i.warning(
         "API healthcheck failed.",
         exception: e,
         stackTrace: e.stackTrace,
