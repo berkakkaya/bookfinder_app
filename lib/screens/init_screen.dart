@@ -154,6 +154,8 @@ class _InitScreenState extends State<InitScreen> {
         "User is already authenticated, navigating to home screen...",
       );
 
+      ApiServiceProvider.i.auth.setTokenPair(tokens);
+
       if (mounted) {
         context.navigateToAndRemoveUntil(const HomeScreen());
       }
