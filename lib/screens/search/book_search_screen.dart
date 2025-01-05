@@ -160,6 +160,7 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
         ),
       ),
       bottomNavigationBar: const CustomBottomNavbar(
+        key: ValueKey("SearchBottomNavbar"),
         selectedItem: CustomBottomNavbarItem.home,
         customIcon: Icon(Icons.search_rounded),
         customTitle: "Kitap Ara",

@@ -20,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: CustomBottomNavbar(
+        key: const ValueKey("HomeBottomNavbar"),
         selectedItem: selectedItem,
         onItemSelected: changeNavItem,
       ),
