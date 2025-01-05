@@ -6,6 +6,8 @@ import "package:bookfinder_app/models/api_response.dart";
 import "package:bookfinder_app/models/bookdata_models.dart";
 import "package:bookfinder_app/services/api/api_service_provider.dart";
 import "package:bookfinder_app/utils/auth_utils.dart" as auth_utils;
+import "package:bookfinder_app/widgets/cover_image.dart";
+import "package:cached_network_image/cached_network_image.dart";
 import "package:flutter/material.dart";
 
 class ExploreTab extends StatefulWidget {
@@ -46,25 +48,23 @@ class _ExploreTabState extends State<ExploreTab> {
             Spacer(),
             Expanded(
               flex: 10,
-              child: AspectRatio(
-                aspectRatio: 2 / 3,
-                child: Image.network(
-                  recommendations.first.thumbnailUrl,
-                  fit: BoxFit.fitHeight,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null ||
-                        loadingProgress.expectedTotalBytes == null) {
-                      return child;
-                    }
-
-                    return Center(
-                      child: CircularProgressIndicator(
-                        value: loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes!,
-                      ),
-                    );
-                  },
+              child: CachedNetworkImage(
+                imageUrl: recommendations.first.thumbnailUrl,
+                progressIndicatorBuilder: (context, url, progress) {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      value: progress.progress,
+                    ),
+                  );
+                },
+                errorWidget: _getCoverImageLoadError,
+                imageBuilder: (_, imageProvider) => CoverImage(
+                  imageProvider: imageProvider,
+                  addBlurredShadow: true,
                 ),
+                fadeInDuration: Duration(milliseconds: 200),
+                fadeOutDuration: Duration(milliseconds: 200),
+                placeholderFadeInDuration: Duration(milliseconds: 200),
               ),
             ),
             Spacer(),
@@ -131,6 +131,28 @@ class _ExploreTabState extends State<ExploreTab> {
       body: Padding(
         padding: EdgeInsets.all(32),
         child: innerChild,
+      ),
+    );
+  }
+
+  Widget _getCoverImageLoadError(context, url, error) {
+    return Center(
+      child: Column(
+        children: [
+          Icon(
+            Icons.error,
+            size: 96,
+            color: colorLightBlack,
+          ),
+          SizedBox(height: 16),
+          Text(
+            "Kitap kapağı yüklenemedi.",
+            style: context.theme.textTheme.bodyMedium?.copyWith(
+              color: colorLightBlack,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }
