@@ -119,17 +119,20 @@ Future<ApiResponse<T>> withAuth<T>(
     "Bearer ${initialTokens.accessToken}",
   );
 
-  if (response.status == ResponseStatus.unauthorized) {
-    // Try to refresh the access token
-    final tokenRefreshResponse =
-        await ApiServiceProvider.i.auth.refreshAccessToken();
+  if (response.status != ResponseStatus.unauthorized) {
+    // If no authorization error happened, return the response as is
+    return response;
+  }
 
-    if (tokenRefreshResponse.status != ResponseStatus.created) {
-      // Token could not be refreshed, logout the user
-      await logout(autoRoute: autoRouteIfUnauthorized);
+  // Try to refresh the access token
+  final tokenRefreshResponse =
+      await ApiServiceProvider.i.auth.refreshAccessToken();
 
-      return ApiResponse(status: ResponseStatus.unauthorized);
-    }
+  if (tokenRefreshResponse.status != ResponseStatus.created) {
+    // Token could not be refreshed, logout the user
+    await logout(autoRoute: autoRouteIfUnauthorized);
+
+    return ApiResponse(status: ResponseStatus.unauthorized);
   }
 
   // Try to do the action again
