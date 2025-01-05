@@ -145,6 +145,13 @@ class BookRecommendation {
     );
   }
 
+  /// Converts a list of JSON objects to a list of [BookRecommendation] objects
+  static List<BookRecommendation> fromJsonList(
+    List<Map<String, dynamic>> list,
+  ) {
+    return list.map((e) => BookRecommendation.fromJson(e)).toList();
+  }
+
   @override
   operator ==(Object other) {
     if (identical(this, other)) return true;
@@ -179,6 +186,11 @@ class BookSearchResult {
       title: json["title"],
       thumbnailUrl: json["thumbnailUrl"],
     );
+  }
+
+  /// Converts a list of JSON objects to a list of [BookSearchResult] objects
+  static List<BookSearchResult> fromJsonList(List<Map<String, dynamic>> list) {
+    return list.map((e) => BookSearchResult.fromJson(e)).toList();
   }
 
   @override
