@@ -1,8 +1,7 @@
 import "package:bookfinder_app/interfaces/api/api_recommendations_subservice.dart";
 import "package:bookfinder_app/models/api_response.dart";
+import "package:bookfinder_app/models/bookdata_models.dart";
 import "package:dio/dio.dart";
-
-typedef RecommendationData = List<Map<String, dynamic>>;
 
 class DioApiRecommendationsSubservice implements ApiRecommendationsSubservice {
   final Dio _dio;
@@ -10,7 +9,7 @@ class DioApiRecommendationsSubservice implements ApiRecommendationsSubservice {
   DioApiRecommendationsSubservice(this._dio);
 
   @override
-  Future<ApiResponse<RecommendationData>> getRecommendations({
+  Future<ApiResponse<List<BookRecommendation>>> getRecommendations({
     required String authHeader,
   }) async {
     try {
@@ -20,8 +19,10 @@ class DioApiRecommendationsSubservice implements ApiRecommendationsSubservice {
       );
 
       if (response.statusCode == 200) {
-        final data = RecommendationData.from(response.data);
-        return ApiResponse(data: data, status: ResponseStatus.ok);
+        final recommendations = BookRecommendation.fromJsonList(
+          response.data["recommendations"],
+        );
+        return ApiResponse(data: recommendations, status: ResponseStatus.ok);
       }
 
       return ApiResponse(status: ResponseStatus.unknownError);

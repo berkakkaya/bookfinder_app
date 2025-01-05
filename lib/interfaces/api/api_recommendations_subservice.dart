@@ -1,8 +1,8 @@
 import "package:bookfinder_app/models/api_response.dart";
-import "package:bookfinder_app/services/api/dio_imp/api_recommendations_subservice.dart";
+import "package:bookfinder_app/models/bookdata_models.dart";
 
 abstract class ApiRecommendationsSubservice {
-  Future<ApiResponse<RecommendationData>> getRecommendations({
+  Future<ApiResponse<List<BookRecommendation>>> getRecommendations({
     required String authHeader,
   });
 }

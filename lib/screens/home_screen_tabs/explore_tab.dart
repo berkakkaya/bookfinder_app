@@ -3,6 +3,7 @@ import "package:bookfinder_app/consts/custom_icons.dart";
 import "package:bookfinder_app/extensions/snackbars.dart";
 import "package:bookfinder_app/extensions/theming.dart";
 import "package:bookfinder_app/models/api_response.dart";
+import "package:bookfinder_app/models/bookdata_models.dart";
 import "package:bookfinder_app/services/api/api_service_provider.dart";
 import "package:bookfinder_app/utils/auth_utils.dart" as auth_utils;
 import "package:flutter/material.dart";
@@ -15,7 +16,7 @@ class ExploreTab extends StatefulWidget {
 }
 
 class _ExploreTabState extends State<ExploreTab> {
-  List<Map<String, dynamic>> recommendations = [];
+  List<BookRecommendation> recommendations = [];
 
   @override
   void initState() {
@@ -39,25 +40,23 @@ class _ExploreTabState extends State<ExploreTab> {
               flex: 10,
               child: AspectRatio(
                 aspectRatio: 2 / 3,
-                child: _getImageUrl(recommendations.first) != null
-                    ? Image.network(
-                        _getImageUrl(recommendations.first)!,
-                        fit: BoxFit.fitHeight,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null ||
-                              loadingProgress.expectedTotalBytes == null) {
-                            return child;
-                          }
+                child: Image.network(
+                  recommendations.first.thumbnailUrl,
+                  fit: BoxFit.fitHeight,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null ||
+                        loadingProgress.expectedTotalBytes == null) {
+                      return child;
+                    }
 
-                          return Center(
-                            child: CircularProgressIndicator(
-                              value: loadingProgress.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes!,
-                            ),
-                          );
-                        },
-                      )
-                    : Container(color: colorGray),
+                    return Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes!,
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
             Spacer(),
@@ -71,7 +70,7 @@ class _ExploreTabState extends State<ExploreTab> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _getTitle(recommendations.first),
+                        recommendations.first.title,
                         style: context.theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -80,7 +79,7 @@ class _ExploreTabState extends State<ExploreTab> {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        _getAuthor(recommendations.first),
+                        recommendations.first.authors.join(", "),
                         style: context.theme.textTheme.titleMedium?.copyWith(
                           color: colorGray,
                         ),
@@ -109,7 +108,7 @@ class _ExploreTabState extends State<ExploreTab> {
             ),
             SizedBox(height: 16),
             Text(
-              _getDescription(recommendations.first) ??
+              recommendations.first.description ??
                   "Kitap açıklaması alınamadı.",
               style: context.theme.textTheme.bodyMedium?.copyWith(
                 color: colorGray,
@@ -126,34 +125,6 @@ class _ExploreTabState extends State<ExploreTab> {
         child: innerChild,
       ),
     );
-  }
-
-  String? _getImageUrl(dynamic data) {
-    try {
-      return data["volumeInfo"]["imageLinks"]["thumbnail"];
-    } catch (e) {
-      return null;
-    }
-  }
-
-  String _getTitle(dynamic data) {
-    return data["volumeInfo"]["title"];
-  }
-
-  String _getAuthor(dynamic data) {
-    try {
-      return data["volumeInfo"]["authors"][0];
-    } catch (e) {
-      return "Yazar alınamadı";
-    }
-  }
-
-  String? _getDescription(dynamic data) {
-    try {
-      return data["volumeInfo"]["description"];
-    } catch (e) {
-      return null;
-    }
   }
 
   Future<void> getRecommendations() async {
