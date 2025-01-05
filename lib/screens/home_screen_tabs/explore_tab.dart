@@ -18,12 +18,20 @@ class ExploreTab extends StatefulWidget {
 class _ExploreTabState extends State<ExploreTab> {
   List<BookRecommendation> recommendations = [];
 
+  bool initFinished = false;
+
   @override
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      getRecommendations();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await getRecommendations();
+
+      if (mounted) {
+        setState(() {
+          initFinished = true;
+        });
+      }
     });
   }
 
@@ -157,8 +165,8 @@ class _ExploreTabState extends State<ExploreTab> {
       recommendations.removeAt(0);
     });
 
-    if (recommendations.length < 3) {
-      getRecommendations();
+    if (recommendations.length < 3 && initFinished) {
+      await getRecommendations();
     }
   }
 }
