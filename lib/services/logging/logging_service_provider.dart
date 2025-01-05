@@ -2,6 +2,7 @@ import "package:bookfinder_app/exceptions/service_provider_error_handling.dart";
 import "package:bookfinder_app/interfaces/logging/logging_service.dart";
 import "package:bookfinder_app/services/logging/talker_imp/talker_logging_service.dart";
 import "package:dio/dio.dart";
+import "package:flutter/widgets.dart";
 import "package:talker_dio_logger/talker_dio_logger.dart";
 import "package:talker_flutter/talker_flutter.dart";
 
@@ -81,6 +82,21 @@ class LoggingServiceProvider {
 
     _instance?.warning(
       "Dio interceptor is not available for the current logging service "
+      "implementation (${implementationType.name})",
+    );
+
+    return null;
+  }
+
+  static Widget? getDebugLogsScreen() {
+    if (i is TalkerLoggingService) {
+      return TalkerScreen(
+        talker: (i as TalkerLoggingService).talker,
+      );
+    }
+
+    _instance?.warning(
+      "Debug logs screen is not available for the current logging service "
       "implementation (${implementationType.name})",
     );
 
