@@ -3,6 +3,7 @@ import "package:bookfinder_app/extensions/theming.dart";
 import "package:bookfinder_app/screens/authentication/login_screen.dart";
 import "package:bookfinder_app/screens/authentication/register/register_1_screen.dart";
 import "package:flutter/material.dart";
+import "package:flutter_svg/flutter_svg.dart";
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -24,12 +25,25 @@ class WelcomeScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const Spacer(),
+              Spacer(),
+              Expanded(
+                flex: 3,
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: SvgPicture.asset(
+                      "assets/illustrations/book_reading.svg",
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 32),
               Text(
                 "Kendine yeni kitaplar keşfet",
-                style: context.theme.textTheme.displaySmall,
+                style: context.theme.textTheme.headlineLarge,
               ),
-              const Spacer(),
+              Spacer(),
               Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
