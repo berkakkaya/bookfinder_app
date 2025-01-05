@@ -1,11 +1,14 @@
 import "dart:async";
 
+import "package:bookfinder_app/consts/colors.dart";
 import "package:bookfinder_app/extensions/snackbars.dart";
 import "package:bookfinder_app/models/api_response.dart";
 import "package:bookfinder_app/models/bookdata_models.dart";
 import "package:bookfinder_app/services/api/api_service_provider.dart";
 import "package:bookfinder_app/utils/auth_utils.dart" as auth_utils;
+import "package:bookfinder_app/widgets/cover_image.dart";
 import "package:bookfinder_app/widgets/custom_bottom_navbar.dart";
+import "package:cached_network_image/cached_network_image.dart";
 import "package:flutter/material.dart";
 
 class BookSearchScreen extends StatefulWidget {
@@ -81,10 +84,33 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
       content = Column(
         children: searchResults!.map((e) {
           return ListTile(
-            leading: SizedBox(
-              height: 64,
-              child: Image.network(
-                e.thumbnailUrl,
+            contentPadding: const EdgeInsets.symmetric(vertical: 16),
+            leading: AspectRatio(
+              aspectRatio: 1,
+              child: CachedNetworkImage(
+                imageUrl: e.thumbnailUrl,
+                fit: BoxFit.fitHeight,
+                progressIndicatorBuilder: (context, url, progress) {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      value: progress.progress,
+                    ),
+                  );
+                },
+                errorWidget: (context, url, error) {
+                  return const Icon(
+                    Icons.error,
+                    size: 64,
+                    color: colorLightBlack,
+                  );
+                },
+                imageBuilder: (_, imageProvider) => CoverImage(
+                  imageProvider: imageProvider,
+                  borderRadius: 8,
+                ),
+                fadeInDuration: const Duration(milliseconds: 200),
+                fadeOutDuration: const Duration(milliseconds: 200),
+                placeholderFadeInDuration: const Duration(milliseconds: 200),
               ),
             ),
             title: Text(e.title),
