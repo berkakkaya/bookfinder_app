@@ -93,7 +93,7 @@ class BookData {
       title: json["title"],
       authors: json["authors"],
       description: json["description"],
-      thumbnailUrl: json["thumbnailUrl"],
+      thumbnailUrl: json["thumbnail"],
       identifiers: identifiers,
     );
   }
@@ -139,15 +139,15 @@ class BookRecommendation {
     return BookRecommendation(
       bookId: json["bookId"],
       title: json["title"],
-      authors: json["authors"],
+      authors: List<String>.from(json["authors"]),
       description: json["description"],
-      thumbnailUrl: json["thumbnailUrl"],
+      thumbnailUrl: json["thumbnail"],
     );
   }
 
   /// Converts a list of JSON objects to a list of [BookRecommendation] objects
   static List<BookRecommendation> fromJsonList(
-    List<Map<String, dynamic>> list,
+    List<dynamic> list,
   ) {
     return list.map((e) => BookRecommendation.fromJson(e)).toList();
   }
@@ -184,12 +184,12 @@ class BookSearchResult {
     return BookSearchResult(
       bookId: json["bookId"],
       title: json["title"],
-      thumbnailUrl: json["thumbnailUrl"],
+      thumbnailUrl: json["thumbnail"],
     );
   }
 
   /// Converts a list of JSON objects to a list of [BookSearchResult] objects
-  static List<BookSearchResult> fromJsonList(List<Map<String, dynamic>> list) {
+  static List<BookSearchResult> fromJsonList(List<dynamic> list) {
     return list.map((e) => BookSearchResult.fromJson(e)).toList();
   }
 
