@@ -1,4 +1,4 @@
-import "package:bookfinder_app/consts/mock_datas.dart";
+import "package:bookfinder_app/consts/mock_datas.dart" as mock_datas;
 import "package:bookfinder_app/models/bookdata_models.dart";
 import "package:bookfinder_app/models/mock_datamodels.dart";
 
@@ -8,8 +8,8 @@ class MockApiDb {
 
   MockApiDb({bool fillWithMockDatas = true}) {
     if (fillWithMockDatas) {
-      mockUsers.addAll(mockUserDatas);
-      mockBookDatas.addAll(mockBookDatas);
+      mockUsers.addAll(mock_datas.mockUserDatas);
+      mockBookDatas.addAll(mock_datas.mockBookDatas);
     }
   }
 }
