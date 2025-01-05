@@ -3,6 +3,7 @@ import "package:bookfinder_app/screens/home_screen_tabs/homepage_tab.dart";
 import "package:bookfinder_app/screens/home_screen_tabs/library_tab.dart";
 import "package:bookfinder_app/screens/home_screen_tabs/profile_tab.dart";
 import "package:bookfinder_app/widgets/custom_bottom_navbar.dart";
+import "package:bookfinder_app/widgets/tab_container.dart";
 import "package:flutter/material.dart";
 
 class HomeScreen extends StatefulWidget {
@@ -23,26 +24,29 @@ class _HomeScreenState extends State<HomeScreen> {
         onItemSelected: changeNavItem,
       ),
       body: SafeArea(
-        child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 150),
-          transitionBuilder: (child, animation) => FadeTransition(
-            opacity: animation,
-            child: child,
-          ),
-          child: switch (selectedItem) {
-            CustomBottomNavbarItem.home => const HomepageTab(
-                key: ValueKey("HomepageTab"),
-              ),
-            CustomBottomNavbarItem.library => const LibraryTab(
-                key: ValueKey("LibraryTab"),
-              ),
-            CustomBottomNavbarItem.explore => const ExploreTab(
-                key: ValueKey("ExploreTab"),
-              ),
-            CustomBottomNavbarItem.profile => const ProfileTab(
-                key: ValueKey("ProfileTab"),
-              ),
-          },
+        child: Stack(
+          children: [
+            TabContainer(
+              key: const ValueKey("HomeTab"),
+              selected: selectedItem == CustomBottomNavbarItem.home,
+              child: const HomepageTab(),
+            ),
+            TabContainer(
+              key: const ValueKey("ExploreTab"),
+              selected: selectedItem == CustomBottomNavbarItem.explore,
+              child: const ExploreTab(),
+            ),
+            TabContainer(
+              key: const ValueKey("LibraryTab"),
+              selected: selectedItem == CustomBottomNavbarItem.library,
+              child: const LibraryTab(),
+            ),
+            TabContainer(
+              key: const ValueKey("ProfileTab"),
+              selected: selectedItem == CustomBottomNavbarItem.profile,
+              child: const ProfileTab(),
+            ),
+          ],
         ),
       ),
     );
