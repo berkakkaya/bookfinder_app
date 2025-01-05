@@ -1,10 +1,12 @@
 import "package:bookfinder_app/exceptions/api_error_handling.dart";
 import "package:bookfinder_app/extensions/navigation.dart";
+import "package:bookfinder_app/interfaces/logging/logging_service.dart";
 import "package:bookfinder_app/screens/authentication/welcome_screen.dart";
 import "package:bookfinder_app/screens/home_screen.dart";
 import "package:bookfinder_app/services/api/api_service_provider.dart";
 import "package:bookfinder_app/services/logging/logging_service_provider.dart";
 import "package:bookfinder_app/services/preferences/preference_service_provider.dart";
+import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 
 class InitScreen extends StatefulWidget {
@@ -37,12 +39,51 @@ class _InitScreenState extends State<InitScreen> {
   }
 
   Future<void> initApp() async {
+    // Ask the user for the implementation type
+    bool useRealImplementation = true;
+
+    if (kDebugMode) {
+      useRealImplementation = await askImplementationType() ?? true;
+    }
+
+    if (useRealImplementation) {
+      await _initRealResources();
+    } else {
+      await _initFakeResources();
+    }
+  }
+
+  Future<void> _initFakeResources() async {
     // Initialize the logging service
     LoggingServiceProvider.initTalker();
     final logger = LoggingServiceProvider.i;
 
+    // Initialize the preference service
+    PreferenceServiceProvider.initMock();
+
+    // Initialize the API service
+    ApiServiceProvider.initMock();
+
+    logger.info(
+      "Using fake resources, navigating to welcome screen...",
+    );
+
+    if (mounted) {
+      context.navigateToAndRemoveUntil(const WelcomeScreen());
+    }
+  }
+
+  Future<void> _initRealResources() async {
+    // Initialize the logging service
+    LoggingServiceProvider.initTalker();
+    final logger = LoggingServiceProvider.i;
+
+    logger.info("Initializing real resources...");
+
     // Get the Dio logger from the logging service
     final dioLogInterceptor = LoggingServiceProvider.dioInterceptor;
+
+    logger.info("Initializing the preference service...");
 
     // Initialize the preference service
     PreferenceServiceProvider.initActual();
@@ -54,6 +95,10 @@ class _InitScreenState extends State<InitScreen> {
     bool isInitialized = false;
 
     if (baseUri != null) {
+      logger.info(
+        "Base API URI is already set, trying to initialize the API service...",
+      );
+
       // Try to initialize the API service
       try {
         await ApiServiceProvider.initDio(
@@ -100,6 +145,8 @@ class _InitScreenState extends State<InitScreen> {
       }
     }
 
+    logger.info("API service is initialized successfully...");
+
     // Try to get the tokens from the preferences
     final tokens = await prefs.getTokens();
 
@@ -122,6 +169,37 @@ class _InitScreenState extends State<InitScreen> {
 
       context.navigateToAndRemoveUntil(const WelcomeScreen());
     }
+  }
+
+  Future<bool?> askImplementationType() {
+    return showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Geliştirici Modu"),
+          content: const Text(
+            "Uygulamanın geliştirici sürümünü çalıştırıyorsunuz. Uygulama "
+            "servislerinin gerçek kaynaklarla mı çalışmasını yoksa sahte "
+            "kaynaklarla mı çalışmasını istersiniz?",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: const Text("Gerçek Kaynakları Kullan"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: const Text("Sahte Kaynakları Kullan"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<Uri?> showBaseUriDialog() {
