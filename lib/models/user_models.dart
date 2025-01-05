@@ -8,15 +8,22 @@ class User {
     required this.nameSurname,
     required this.email,
   });
-}
 
-class MockUser extends User {
-  final String password;
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      userId: json["userId"],
+      nameSurname: json["nameSurname"],
+      email: json["email"],
+    );
+  }
 
-  const MockUser({
-    required super.userId,
-    required super.nameSurname,
-    required super.email,
-    required this.password,
-  });
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is User && other.userId == userId;
+  }
+
+  @override
+  int get hashCode => userId.hashCode;
 }

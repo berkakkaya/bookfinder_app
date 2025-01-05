@@ -1,4 +1,4 @@
-import "package:bookfinder_app/models/user_models.dart";
+import "package:bookfinder_app/models/mock_datamodels.dart";
 
 const List<MockUser> mockUserDatas = [
   MockUser(
