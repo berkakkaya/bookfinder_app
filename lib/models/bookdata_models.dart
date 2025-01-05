@@ -21,7 +21,7 @@ class BookIdentifier {
   /// The identifier value
   final String identifier;
 
-  BookIdentifier({required this.type, required this.identifier});
+  const BookIdentifier({required this.type, required this.identifier});
 
   /// Converts a JSON object to a [BookIdentifier] object
   factory BookIdentifier.fromJson(Map<String, dynamic> json) {
