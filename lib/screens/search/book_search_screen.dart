@@ -2,6 +2,7 @@ import "dart:async";
 
 import "package:bookfinder_app/extensions/snackbars.dart";
 import "package:bookfinder_app/models/api_response.dart";
+import "package:bookfinder_app/models/bookdata_models.dart";
 import "package:bookfinder_app/services/api/api_service_provider.dart";
 import "package:bookfinder_app/utils/auth_utils.dart" as auth_utils;
 import "package:bookfinder_app/widgets/custom_bottom_navbar.dart";
@@ -21,7 +22,7 @@ class BookSearchScreen extends StatefulWidget {
 
 class _BookSearchScreenState extends State<BookSearchScreen> {
   Timer? _searchDebounce;
-  List<Map<String, dynamic>>? searchResults;
+  List<BookSearchResult>? searchResults;
   bool isSearching = false;
 
   @override
@@ -80,7 +81,13 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
       content = Column(
         children: searchResults!.map((e) {
           return ListTile(
-            title: Text(e["title"] as String),
+            leading: SizedBox(
+              height: 64,
+              child: Image.network(
+                e.thumbnailUrl,
+              ),
+            ),
+            title: Text(e.title),
           );
         }).toList(),
       );
@@ -184,9 +191,8 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
     if (mounted) {
       setState(() {
         isSearching = false;
-        searchResults = result.status == ResponseStatus.notFound
-            ? []
-            : result.data as List<Map<String, dynamic>>;
+        searchResults =
+            result.status == ResponseStatus.notFound ? [] : result.data;
       });
     }
   }
