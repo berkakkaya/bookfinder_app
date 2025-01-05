@@ -1,6 +1,5 @@
 import "package:bookfinder_app/exceptions/api_error_handling.dart";
 import "package:bookfinder_app/extensions/navigation.dart";
-import "package:bookfinder_app/interfaces/logging/logging_service.dart";
 import "package:bookfinder_app/screens/authentication/welcome_screen.dart";
 import "package:bookfinder_app/screens/home_screen.dart";
 import "package:bookfinder_app/services/api/api_service_provider.dart";
