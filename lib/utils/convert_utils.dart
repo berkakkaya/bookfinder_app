@@ -1,4 +1,5 @@
 import "package:bookfinder_app/models/api_response.dart";
+import "package:bookfinder_app/models/bookdata_models.dart";
 
 ResponseStatus? parseResponseStatus(int? statusCode) {
   return switch (statusCode) {
@@ -12,5 +13,14 @@ ResponseStatus? parseResponseStatus(int? statusCode) {
     500 => ResponseStatus.serverError,
     != null => ResponseStatus.unknownError,
     _ => null,
+  };
+}
+
+String convertIndustryIdentifierToString(IdentifierType type) {
+  return switch (type) {
+    IdentifierType.isbn10 => "ISBN-10",
+    IdentifierType.isbn13 => "ISBN-13",
+    IdentifierType.issn => "ISSN",
+    IdentifierType.other => "Other",
   };
 }

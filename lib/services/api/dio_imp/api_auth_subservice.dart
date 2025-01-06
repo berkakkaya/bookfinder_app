@@ -1,7 +1,7 @@
 import "package:bookfinder_app/interfaces/api/api_auth_subservice.dart";
 import "package:bookfinder_app/models/api_response.dart";
 import "package:bookfinder_app/models/token_pair.dart";
-import "package:bookfinder_app/utils/api_utils.dart";
+import "package:bookfinder_app/utils/convert_utils.dart";
 import "package:dio/dio.dart";
 
 class DioApiAuthSubservice extends ApiAuthSubservice {
