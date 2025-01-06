@@ -2,6 +2,7 @@ import "package:bookfinder_app/extensions/lists.dart";
 import "package:bookfinder_app/interfaces/api/api_booktracking_subservice.dart";
 import "package:bookfinder_app/models/api_response.dart";
 import "package:bookfinder_app/models/book_tracking_models.dart";
+import "package:bookfinder_app/models/mock_datamodels.dart";
 import "package:bookfinder_app/services/api/mock_imp/mock_api_db.dart";
 
 class MockApiBooktrackingSubservice implements ApiBooktrackingSubservice {
@@ -96,12 +97,16 @@ class MockApiBooktrackingSubservice implements ApiBooktrackingSubservice {
     );
 
     if (bookTrackingData == null) {
-      return Future.value(ApiResponse(
-        status: ResponseStatus.notFound,
-      ));
-    }
+      final newData = MockBookTrackingData(
+        userId: userId,
+        bookId: bookId,
+        status: status,
+      );
 
-    bookTrackingData.status = status;
+      _db.mockBookTrackingDatas.add(newData);
+    } else {
+      bookTrackingData.status = status;
+    }
 
     return Future.value(ApiResponse(
       status: ResponseStatus.ok,
