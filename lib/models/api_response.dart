@@ -2,6 +2,7 @@ enum ResponseStatus {
   ok,
   created,
   noContentOk,
+
   notFound,
   unauthorized,
   forbidden,

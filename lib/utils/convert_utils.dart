@@ -6,6 +6,7 @@ ResponseStatus? parseResponseStatus(int? statusCode) {
     200 => ResponseStatus.ok,
     201 => ResponseStatus.created,
     204 => ResponseStatus.noContentOk,
+    400 => ResponseStatus.badRequest,
     401 => ResponseStatus.unauthorized,
     403 => ResponseStatus.forbidden,
     404 => ResponseStatus.notFound,
