@@ -2,8 +2,12 @@ import "package:bookfinder_app/consts/colors.dart";
 import "package:bookfinder_app/extensions/navigation.dart";
 import "package:bookfinder_app/extensions/snackbars.dart";
 import "package:bookfinder_app/extensions/theming.dart";
+import "package:bookfinder_app/models/api_response.dart";
+import "package:bookfinder_app/models/user_models.dart";
+import "package:bookfinder_app/services/api/api_service_provider.dart";
 import "package:bookfinder_app/services/logging/logging_service_provider.dart";
 import "package:bookfinder_app/utils/auth_utils.dart";
+import "package:bookfinder_app/utils/parsing_utils.dart";
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 
@@ -15,42 +19,129 @@ class ProfileTab extends StatefulWidget {
 }
 
 class _ProfileTabState extends State<ProfileTab> {
+  Future<User?>? _userFuture;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() {
+          _userFuture = _getCurrentUser();
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
+      appBar: AppBar(
+        leading: null,
+        backgroundColor: context.theme.scaffoldBackgroundColor,
+        actions: [
           if (kDebugMode)
-            Align(
-              alignment: Alignment.centerRight,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    onPressed: _showDeveloperDialog,
-                    icon: Icon(Icons.developer_mode_rounded),
-                  ),
-                ],
-              ),
+            IconButton(
+              onPressed: _showDeveloperDialog,
+              icon: Icon(Icons.developer_mode_rounded),
             ),
-          Expanded(
-            child: Center(
-              child: FilledButton.icon(
-                icon: Icon(Icons.logout_rounded),
-                label: Text("Çıkış Yap"),
-                style: context.theme.filledButtonTheme.style?.copyWith(
-                  backgroundColor: WidgetStatePropertyAll(colorRed),
-                ),
-                onPressed: logoutPressed,
-              ),
-            ),
+          IconButton(
+            onPressed: () {
+              setState(() {
+                _userFuture = _getCurrentUser();
+              });
+            },
+            icon: Icon(Icons.refresh_rounded),
+          ),
+          IconButton(
+            onPressed: logoutPressed,
+            icon: Icon(Icons.logout_rounded),
           ),
         ],
       ),
+      body: FutureBuilder(
+        future: _userFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                "Kullanıcı bilgileri alınamadı. Lütfen tekrar deneyin.",
+              ),
+            );
+          }
+
+          if (!snapshot.hasData) {
+            return Center(
+              child: Text(
+                "Kullanıcı bilgileri alınamadı. Lütfen tekrar deneyin.",
+              ),
+            );
+          }
+
+          final User user = snapshot.data as User;
+
+          return ListView(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 32,
+            ),
+            children: [
+              CircleAvatar(
+                radius: 96,
+                backgroundColor: colorGray,
+                // Put first two letters of the name and surname
+                child: Text(
+                  parseLeadingLetters(user.nameSurname, count: 2),
+                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                        color: colorWhite,
+                      ),
+                ),
+              ),
+              const SizedBox(height: 32),
+              Text(
+                user.nameSurname,
+                style: Theme.of(context).textTheme.headlineLarge,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          );
+        },
+      ),
     );
+  }
+
+  Future<User?> _getCurrentUser() async {
+    final response = await withAuth((authHeader) {
+      return ApiServiceProvider.i.users.getUser(
+        null,
+        authHeader: authHeader,
+      );
+    });
+
+    if (response.status != ResponseStatus.ok) {
+      if (mounted) {
+        context.showSnackbar(
+          "Kullanıcı bilgileri alınamadı. Lütfen tekrar deneyin.",
+          type: SnackbarType.error,
+        );
+      }
+
+      return null;
+    }
+
+    assert(
+      response.data != null,
+      "The user data should not be null if the response status is ok.",
+    );
+
+    return response.data!;
   }
 
   Future<void> logoutPressed() async {
