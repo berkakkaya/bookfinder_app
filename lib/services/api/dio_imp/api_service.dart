@@ -2,6 +2,7 @@ import "package:bookfinder_app/exceptions/api_error_handling.dart";
 import "package:bookfinder_app/interfaces/api/api_service.dart";
 import "package:bookfinder_app/models/token_pair.dart";
 import "package:bookfinder_app/services/api/dio_imp/api_bookdatas_subservice.dart";
+import "package:bookfinder_app/services/api/dio_imp/api_booktracking_subservice.dart";
 import "package:bookfinder_app/services/api/dio_imp/api_recommendations_subservice.dart";
 import "package:bookfinder_app/services/api/dio_imp/api_auth_subservice.dart";
 import "package:bookfinder_app/services/api/dio_imp/api_users_subservice.dart";
@@ -15,16 +16,23 @@ class DioApiService extends ApiService {
   final DioApiRecommendationsSubservice _recommendationsSubservice;
   final DioApiAuthSubservice _authSubservice;
   final DioApiUsersSubservice _usersSubservice;
+  final DioApiBooktrackingSubservice _booktrackingSubservice;
 
   @override
   DioApiBookdatasSubservice get bookDatas => _bookDatasSubservice;
+
   @override
   DioApiRecommendationsSubservice get recommendations =>
       _recommendationsSubservice;
+
   @override
   DioApiAuthSubservice get auth => _authSubservice;
+
   @override
   DioApiUsersSubservice get users => _usersSubservice;
+
+  @override
+  DioApiBooktrackingSubservice get bookTracking => _booktrackingSubservice;
 
   DioApiService._({
     required Dio dio,
@@ -33,7 +41,8 @@ class DioApiService extends ApiService {
         _bookDatasSubservice = DioApiBookdatasSubservice(dio),
         _recommendationsSubservice = DioApiRecommendationsSubservice(dio),
         _authSubservice = DioApiAuthSubservice(dio, tokens: tokens),
-        _usersSubservice = DioApiUsersSubservice(dio);
+        _usersSubservice = DioApiUsersSubservice(dio),
+        _booktrackingSubservice = DioApiBooktrackingSubservice(dio);
 
   static Future<DioApiService> createInstance({
     required Uri baseUri,
