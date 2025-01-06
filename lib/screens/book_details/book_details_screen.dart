@@ -2,6 +2,7 @@ import "package:bookfinder_app/consts/colors.dart";
 import "package:bookfinder_app/consts/custom_icons.dart";
 import "package:bookfinder_app/extensions/theming.dart";
 import "package:bookfinder_app/models/api_response.dart";
+import "package:bookfinder_app/models/book_tracking_models.dart";
 import "package:bookfinder_app/models/bookdata_models.dart";
 import "package:bookfinder_app/services/api/api_service_provider.dart";
 import "package:bookfinder_app/services/logging/logging_service_provider.dart";
@@ -10,6 +11,7 @@ import "package:bookfinder_app/utils/convert_utils.dart";
 import "package:bookfinder_app/widgets/cover_image.dart";
 import "package:bookfinder_app/widgets/custom_bottom_navbar.dart";
 import "package:bookfinder_app/widgets/info_card.dart";
+import "package:bookfinder_app/widgets/outlined_circle.dart";
 import "package:cached_network_image/cached_network_image.dart";
 import "package:flutter/material.dart";
 
@@ -116,14 +118,14 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Expanded(
-                      child: FilledButton.icon(
+                      child: OutlinedButton.icon(
                         icon: Icon(CustomIcons.circlesRounded),
                         label: Text(
                           "Takibe Al",
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        onPressed: () {},
+                        onPressed: showBookTrackCard,
                       ),
                     ),
                     SizedBox(width: 16),
@@ -192,6 +194,101 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
         disableSubpageSelections: true,
       ),
     );
+  }
+
+  Future<void> showBookTrackCard() async {
+    final result = await showModalBottomSheet<BookTrackingStatus>(
+      context: context,
+      builder: (context) {
+        const double circleSize = 24;
+        const double borderWidth = 1.3;
+        const Color borderColor = colorLightBlack;
+
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                "Kitabı takip et",
+                style: context.theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ListTile(
+              title: Text("Takipten çıkar"),
+              leading: OutlinedCircle(
+                backgroundColor: Colors.transparent,
+                size: circleSize,
+                borderWidth: borderWidth,
+                borderColor: borderColor,
+              ),
+              onTap: () {
+                Navigator.of(context).pop(null);
+              },
+            ),
+            ListTile(
+              title: Text("Okunacak"),
+              leading: OutlinedCircle(
+                backgroundColor: colorBlue,
+                size: circleSize,
+                borderWidth: borderWidth,
+                borderColor: borderColor,
+              ),
+              onTap: () {
+                Navigator.of(context).pop(BookTrackingStatus.willRead);
+              },
+            ),
+            ListTile(
+              title: Text("Devam ediliyor"),
+              leading: OutlinedCircle(
+                backgroundColor: colorOrange,
+                size: circleSize,
+                borderWidth: borderWidth,
+                borderColor: borderColor,
+              ),
+              onTap: () {
+                Navigator.of(context).pop(BookTrackingStatus.reading);
+              },
+            ),
+            ListTile(
+              title: Text("Tamamlandı"),
+              leading: OutlinedCircle(
+                backgroundColor: colorGreen,
+                size: circleSize,
+                borderWidth: borderWidth,
+                borderColor: borderColor,
+              ),
+              onTap: () {
+                Navigator.of(context).pop(BookTrackingStatus.completed);
+              },
+            ),
+            ListTile(
+              title: Text("Bırakıldı"),
+              leading: OutlinedCircle(
+                backgroundColor: colorRed,
+                size: circleSize,
+                borderWidth: borderWidth,
+                borderColor: borderColor,
+              ),
+              onTap: () {
+                Navigator.of(context).pop(BookTrackingStatus.dropped);
+              },
+            ),
+            SizedBox(height: 16),
+          ],
+        );
+      },
+    );
+
+    if (result != null) {
+      // TODO: Handle the result
+    }
   }
 
   Future<BookData?> fetchBookData() async {
