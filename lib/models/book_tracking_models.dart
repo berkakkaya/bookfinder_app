@@ -7,9 +7,9 @@ enum BookTrackingStatus {
 
 class BookTrackingData {
   final String bookId;
-  final BookTrackingStatus status;
+  BookTrackingStatus status;
 
-  const BookTrackingData({
+  BookTrackingData({
     required this.bookId,
     required this.status,
   });
@@ -20,7 +20,7 @@ class BookTrackingDataWithBookData extends BookTrackingData {
   final List<String> bookAuthors;
   final String bookThumbnailUrl;
 
-  const BookTrackingDataWithBookData({
+  BookTrackingDataWithBookData({
     required super.bookId,
     required super.status,
     required this.bookTitle,
