@@ -36,6 +36,7 @@ class MyApp extends StatelessWidget {
               },
             ),
             foregroundColor: const WidgetStatePropertyAll(colorBackground),
+            iconColor: const WidgetStatePropertyAll(colorBackground),
             padding: const WidgetStatePropertyAll(EdgeInsets.all(16)),
             shape: WidgetStatePropertyAll(RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
@@ -43,7 +44,46 @@ class MyApp extends StatelessWidget {
             textStyle: WidgetStatePropertyAll(
               context.theme.textTheme.bodyLarge,
             ),
-            overlayColor: const WidgetStatePropertyAll(Colors.white30),
+            overlayColor: const WidgetStatePropertyAll(Colors.white24),
+          ),
+        ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: ButtonStyle(
+            foregroundColor: WidgetStateProperty.resolveWith((states) {
+              return states.contains(WidgetState.disabled)
+                  ? colorGray
+                  : colorLightBlack;
+            }),
+            iconColor: WidgetStateProperty.resolveWith((states) {
+              return states.contains(WidgetState.disabled)
+                  ? colorGray
+                  : colorLightBlack;
+            }),
+            padding: const WidgetStatePropertyAll(EdgeInsets.all(16)),
+            shape: WidgetStatePropertyAll(RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            )),
+            side: WidgetStateProperty.resolveWith(
+              (states) {
+                if (states.contains(WidgetState.disabled)) {
+                  return const BorderSide(
+                    color: Colors.black26,
+                    width: 2,
+                  );
+                }
+
+                return const BorderSide(
+                  color: colorLightBlack,
+                  width: 2,
+                );
+              },
+            ),
+            textStyle: WidgetStatePropertyAll(
+              context.theme.textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            overlayColor: const WidgetStatePropertyAll(Colors.black12),
           ),
         ),
         inputDecorationTheme: InputDecorationTheme(
