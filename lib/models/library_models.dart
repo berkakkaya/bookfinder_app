@@ -39,14 +39,14 @@ class BookListItem {
 class BookListBookItem {
   final String bookId;
   final String title;
-  final String author;
-  final String coverUrl;
+  final List<String> authors;
+  final String thumbnailUrl;
 
   BookListBookItem({
     required this.bookId,
     required this.title,
-    required this.author,
-    required this.coverUrl,
+    required this.authors,
+    required this.thumbnailUrl,
   });
 }
 
