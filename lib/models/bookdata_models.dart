@@ -84,14 +84,14 @@ class BookData {
   factory BookData.fromJson(Map<String, dynamic> json) {
     final List<BookIdentifier> identifiers = [];
 
-    for (final Map<String, dynamic> identifier in json["identifiers"]) {
+    for (final dynamic identifier in json["identifiers"]) {
       identifiers.add(BookIdentifier.fromJson(identifier));
     }
 
     return BookData(
       bookId: json["bookId"],
       title: json["title"],
-      authors: json["authors"],
+      authors: List<String>.from(json["authors"]),
       description: json["description"],
       thumbnailUrl: json["thumbnail"],
       identifiers: identifiers,
