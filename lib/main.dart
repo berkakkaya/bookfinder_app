@@ -121,6 +121,21 @@ class MyApp extends StatelessWidget {
           ),
           closeIconColor: colorWhite,
         ),
+        bottomSheetTheme: const BottomSheetThemeData(
+          backgroundColor: colorBackground,
+          modalBackgroundColor: colorBackground,
+          showDragHandle: true,
+          dragHandleColor: colorLightBlack,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(16),
+            ),
+            side: BorderSide(
+              color: colorLightBlack,
+              width: 1,
+            ),
+          ),
+        ),
       ),
       navigatorKey: navigatorKey,
       home: const InitScreen(),
