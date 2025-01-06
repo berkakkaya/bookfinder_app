@@ -8,6 +8,7 @@ class CoverImage extends StatelessWidget {
   final BoxFit fit;
   final bool addBlurredShadow;
   final double shadowDownscale;
+  final String? heroTag;
 
   const CoverImage({
     super.key,
@@ -16,20 +17,34 @@ class CoverImage extends StatelessWidget {
     this.fit = BoxFit.cover,
     this.addBlurredShadow = false,
     this.shadowDownscale = 3,
+    this.heroTag,
   });
 
   @override
   Widget build(BuildContext context) {
-    if (!addBlurredShadow) {
-      return Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(borderRadius),
-          image: DecorationImage(
-            image: imageProvider,
-            fit: fit,
-          ),
+    final imageContent = Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.black26,
+          width: 1.5,
         ),
-      );
+        image: DecorationImage(
+          image: imageProvider,
+          fit: fit,
+        ),
+      ),
+    );
+
+    if (!addBlurredShadow) {
+      if (heroTag != null) {
+        return Hero(
+          tag: heroTag!,
+          child: imageContent,
+        );
+      } else {
+        return imageContent;
+      }
     }
 
     return Stack(
@@ -58,19 +73,12 @@ class CoverImage extends StatelessWidget {
           ),
         ),
         Positioned.fill(
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: Colors.black26,
-                width: 1.5,
-              ),
-              image: DecorationImage(
-                image: imageProvider,
-                fit: fit,
-              ),
-            ),
-          ),
+          child: heroTag != null
+              ? Hero(
+                  tag: heroTag!,
+                  child: imageContent,
+                )
+              : imageContent,
         ),
       ],
     );

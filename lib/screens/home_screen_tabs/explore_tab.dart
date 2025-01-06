@@ -1,9 +1,11 @@
 import "package:bookfinder_app/consts/colors.dart";
 import "package:bookfinder_app/consts/custom_icons.dart";
+import "package:bookfinder_app/extensions/navigation.dart";
 import "package:bookfinder_app/extensions/snackbars.dart";
 import "package:bookfinder_app/extensions/theming.dart";
 import "package:bookfinder_app/models/api_response.dart";
 import "package:bookfinder_app/models/bookdata_models.dart";
+import "package:bookfinder_app/screens/book_details/book_details_screen.dart";
 import "package:bookfinder_app/services/api/api_service_provider.dart";
 import "package:bookfinder_app/utils/auth_utils.dart" as auth_utils;
 import "package:bookfinder_app/widgets/cover_image.dart";
@@ -48,23 +50,30 @@ class _ExploreTabState extends State<ExploreTab> {
             Spacer(),
             Expanded(
               flex: 10,
-              child: CachedNetworkImage(
-                imageUrl: recommendations.first.thumbnailUrl,
-                progressIndicatorBuilder: (context, url, progress) {
-                  return Center(
-                    child: CircularProgressIndicator(
-                      value: progress.progress,
-                    ),
-                  );
-                },
-                errorWidget: _getCoverImageLoadError,
-                imageBuilder: (_, imageProvider) => CoverImage(
-                  imageProvider: imageProvider,
-                  addBlurredShadow: true,
+              child: GestureDetector(
+                onTap: () => goToBookDetailsScreen(
+                  recommendations.first.bookId,
+                  recommendations.first.thumbnailUrl,
                 ),
-                fadeInDuration: Duration(milliseconds: 200),
-                fadeOutDuration: Duration(milliseconds: 200),
-                placeholderFadeInDuration: Duration(milliseconds: 200),
+                child: CachedNetworkImage(
+                  imageUrl: recommendations.first.thumbnailUrl,
+                  progressIndicatorBuilder: (context, url, progress) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        value: progress.progress,
+                      ),
+                    );
+                  },
+                  errorWidget: _getCoverImageLoadError,
+                  imageBuilder: (_, imageProvider) => CoverImage(
+                    imageProvider: imageProvider,
+                    addBlurredShadow: true,
+                    heroTag: "bookCover:${recommendations.first.bookId}",
+                  ),
+                  fadeInDuration: Duration(milliseconds: 200),
+                  fadeOutDuration: Duration(milliseconds: 200),
+                  placeholderFadeInDuration: Duration(milliseconds: 200),
+                ),
               ),
             ),
             Spacer(),
@@ -190,5 +199,12 @@ class _ExploreTabState extends State<ExploreTab> {
     if (recommendations.length < 3 && initFinished) {
       await getRecommendations();
     }
+  }
+
+  void goToBookDetailsScreen(String bookId, String thumbnailUrl) {
+    context.navigateTo(BookDetailsScreen(
+      bookId: bookId,
+      thumbnailUrl: thumbnailUrl,
+    ));
   }
 }

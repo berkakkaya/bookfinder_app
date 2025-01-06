@@ -15,10 +15,12 @@ import "package:flutter/material.dart";
 
 class BookDetailsScreen extends StatefulWidget {
   final String bookId;
+  final String thumbnailUrl;
 
   const BookDetailsScreen({
     super.key,
     required this.bookId,
+    required this.thumbnailUrl,
   });
 
   @override
@@ -46,59 +48,51 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
         child: FutureBuilder(
           future: bookDataFuture,
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-
-            if (snapshot.hasError) {
-              return Center(
-                child: Text("Error: ${snapshot.error}"),
-              );
-            }
-
-            if (!snapshot.hasData) {
-              return Center(
-                child: Text("Kitap verisi alınamadı."),
-              );
-            }
-
-            final BookData bookData = snapshot.data!;
-
-            var coverImage = Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 64),
-              child: AspectRatio(
-                aspectRatio: 2 / 3,
-                child: CachedNetworkImage(
-                  imageUrl: bookData.thumbnailUrl,
-                  progressIndicatorBuilder: (context, url, downloadProgress) {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        value: downloadProgress.progress,
-                      ),
-                    );
-                  },
-                  errorWidget: (context, url, error) {
-                    return Center(
-                      child: Icon(Icons.error),
-                    );
-                  },
-                  imageBuilder: (context, imageProvider) => CoverImage(
-                    imageProvider: imageProvider,
-                    addBlurredShadow: true,
+            List<Widget> content = [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 64),
+                child: AspectRatio(
+                  aspectRatio: 2 / 3,
+                  child: CachedNetworkImage(
+                    imageUrl: widget.thumbnailUrl,
+                    progressIndicatorBuilder: (context, url, downloadProgress) {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          value: downloadProgress.progress,
+                        ),
+                      );
+                    },
+                    errorWidget: (context, url, error) {
+                      return Center(
+                        child: Icon(Icons.error),
+                      );
+                    },
+                    imageBuilder: (context, imageProvider) => CoverImage(
+                      imageProvider: imageProvider,
+                      addBlurredShadow: true,
+                      heroTag: "bookCover:${widget.bookId}",
+                    ),
                   ),
                 ),
               ),
-            );
+            ];
 
-            return ListView(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 32,
-              ),
-              children: [
-                coverImage,
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              content.add(Center(
+                child: CircularProgressIndicator(),
+              ));
+            } else if (snapshot.hasError) {
+              content.add(Center(
+                child: Text("Error: ${snapshot.error}"),
+              ));
+            } else if (!snapshot.hasData) {
+              content.add(Center(
+                child: Text("Kitap verisi alınamadı."),
+              ));
+            } else {
+              final BookData bookData = snapshot.data!;
+
+              content.addAll([
                 SizedBox(height: 48),
                 Text(
                   bookData.title,
@@ -178,7 +172,15 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                       ),
                     ),
                 ],
-              ],
+              ]);
+            }
+
+            return ListView(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 32,
+              ),
+              children: content,
             );
           },
         ),
