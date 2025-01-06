@@ -1,5 +1,6 @@
 import "package:bookfinder_app/consts/colors.dart";
 import "package:bookfinder_app/consts/custom_icons.dart";
+import "package:bookfinder_app/extensions/snackbars.dart";
 import "package:bookfinder_app/extensions/theming.dart";
 import "package:bookfinder_app/models/api_response.dart";
 import "package:bookfinder_app/models/book_tracking_models.dart";
@@ -31,6 +32,7 @@ class BookDetailsScreen extends StatefulWidget {
 
 class _BookDetailsScreenState extends State<BookDetailsScreen> {
   Future<BookData?>? bookDataFuture;
+  Future<BookTrackingData?>? bookTrackingDataFuture;
 
   @override
   void initState() {
@@ -118,15 +120,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Expanded(
-                      child: OutlinedButton.icon(
-                        icon: Icon(CustomIcons.circlesRounded),
-                        label: Text(
-                          "Takibe Al",
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        onPressed: showBookTrackCard,
-                      ),
+                      child: _getBookTrackingButton(),
                     ),
                     SizedBox(width: 16),
                     Expanded(
@@ -196,8 +190,54 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     );
   }
 
-  Future<void> showBookTrackCard() async {
-    final result = await showModalBottomSheet<BookTrackingStatus>(
+  Widget _getBookTrackingButton() {
+    return FutureBuilder(
+      future: bookTrackingDataFuture,
+      builder: (context, snapshot) {
+        final bool isLoaded = snapshot.connectionState == ConnectionState.done;
+
+        final BookTrackingStatus? status = snapshot.data?.status;
+
+        final Color circleColor = switch (status) {
+          BookTrackingStatus.willRead => colorBlue,
+          BookTrackingStatus.reading => colorOrange,
+          BookTrackingStatus.completed => colorGreen,
+          BookTrackingStatus.dropped => colorRed,
+          _ => Colors.transparent,
+        };
+
+        final String buttonLabel = switch (status) {
+          BookTrackingStatus.willRead => "Okunacak",
+          BookTrackingStatus.reading => "Devam ediliyor",
+          BookTrackingStatus.completed => "Tamamlandı",
+          BookTrackingStatus.dropped => "Bırakıldı",
+          _ => "Takibe Al",
+        };
+
+        return OutlinedButton.icon(
+          icon: status == null
+              ? Icon(CustomIcons.circlesRounded)
+              : OutlinedCircle(
+                  backgroundColor: circleColor,
+                  size: 16,
+                ),
+          label: Text(
+            isLoaded ? buttonLabel : "Yükleniyor...",
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          onPressed: () => setBookTrackData(oldStatus: status),
+        );
+      },
+    );
+  }
+
+  Future<void> setBookTrackData({
+    required BookTrackingStatus? oldStatus,
+  }) async {
+    bool userMadeChoice = false;
+
+    final newChoice = await showModalBottomSheet<BookTrackingStatus>(
       context: context,
       builder: (context) {
         const double circleSize = 24;
@@ -229,6 +269,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                 borderColor: borderColor,
               ),
               onTap: () {
+                userMadeChoice = true;
                 Navigator.of(context).pop(null);
               },
             ),
@@ -241,6 +282,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                 borderColor: borderColor,
               ),
               onTap: () {
+                userMadeChoice = true;
                 Navigator.of(context).pop(BookTrackingStatus.willRead);
               },
             ),
@@ -253,6 +295,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                 borderColor: borderColor,
               ),
               onTap: () {
+                userMadeChoice = true;
                 Navigator.of(context).pop(BookTrackingStatus.reading);
               },
             ),
@@ -265,6 +308,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                 borderColor: borderColor,
               ),
               onTap: () {
+                userMadeChoice = true;
                 Navigator.of(context).pop(BookTrackingStatus.completed);
               },
             ),
@@ -277,6 +321,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                 borderColor: borderColor,
               ),
               onTap: () {
+                userMadeChoice = true;
                 Navigator.of(context).pop(BookTrackingStatus.dropped);
               },
             ),
@@ -286,8 +331,45 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
       },
     );
 
-    if (result != null) {
-      // TODO: Handle the result
+    if (!userMadeChoice) return;
+    if (newChoice == oldStatus) return;
+
+    final response = await withAuth((authHeader) {
+      if (newChoice == null) {
+        return ApiServiceProvider.i.bookTracking.removeBookTrackingData(
+          widget.bookId,
+          authHeader: authHeader,
+        );
+      }
+
+      return ApiServiceProvider.i.bookTracking.updateBookTrackingData(
+        bookId: widget.bookId,
+        status: newChoice,
+        authHeader: authHeader,
+      );
+    });
+
+    if (![ResponseStatus.ok, ResponseStatus.notFound].contains(
+      response.status,
+    )) {
+      LoggingServiceProvider.i.error(
+        "Failed to update book tracking data (response: ${response.status})",
+      );
+
+      if (mounted) {
+        context.showSnackbar(
+          "Kitap takip verisi güncellenemedi.",
+          type: SnackbarType.error,
+        );
+      }
+
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        bookTrackingDataFuture = fetchBookTrackingData();
+      });
     }
   }
 
@@ -312,6 +394,40 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
       "Book data is must not be null after successful response",
     );
 
+    if (mounted) {
+      setState(() {
+        bookTrackingDataFuture = fetchBookTrackingData();
+      });
+    }
+
     return response.data!;
+  }
+
+  Future<BookTrackingData?> fetchBookTrackingData() async {
+    final response = await withAuth((authHeader) {
+      return ApiServiceProvider.i.bookTracking.getBookTrackingData(
+        widget.bookId,
+        authHeader: authHeader,
+      );
+    });
+
+    if (![ResponseStatus.notFound, ResponseStatus.ok].contains(
+      response.status,
+    )) {
+      LoggingServiceProvider.i.error(
+        "Failed to fetch book tracking data (response: ${response.status})",
+      );
+
+      if (mounted) {
+        context.showSnackbar(
+          "Kitap takip verisi alınamadı.",
+          type: SnackbarType.error,
+        );
+      }
+
+      return null;
+    }
+
+    return response.data;
   }
 }
