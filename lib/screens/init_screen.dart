@@ -1,3 +1,4 @@
+import "package:bookfinder_app/consts/mock_datas.dart";
 import "package:bookfinder_app/exceptions/api_error_handling.dart";
 import "package:bookfinder_app/extensions/navigation.dart";
 import "package:bookfinder_app/screens/authentication/welcome_screen.dart";
@@ -63,12 +64,16 @@ class _InitScreenState extends State<InitScreen> {
     // Initialize the API service
     ApiServiceProvider.initMock();
 
+    // Do authentication with first user
+    final user = mockUserDatas.first;
+    await ApiServiceProvider.i.auth.login(user.email, user.password);
+
     logger.info(
-      "Using fake resources, navigating to welcome screen...",
+      "Using fake resources...",
     );
 
     if (mounted) {
-      context.navigateToAndRemoveUntil(const WelcomeScreen());
+      context.navigateToAndRemoveUntil(const HomeScreen());
     }
   }
 
