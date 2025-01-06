@@ -1,9 +1,11 @@
 import "dart:async";
 
 import "package:bookfinder_app/consts/colors.dart";
+import "package:bookfinder_app/extensions/navigation.dart";
 import "package:bookfinder_app/extensions/snackbars.dart";
 import "package:bookfinder_app/models/api_response.dart";
 import "package:bookfinder_app/models/bookdata_models.dart";
+import "package:bookfinder_app/screens/book_details/book_details_screen.dart";
 import "package:bookfinder_app/services/api/api_service_provider.dart";
 import "package:bookfinder_app/utils/auth_utils.dart" as auth_utils;
 import "package:bookfinder_app/widgets/cover_image.dart";
@@ -84,6 +86,7 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
       content = Column(
         children: searchResults!.map((e) {
           return ListTile(
+            onTap: () => goToBookDetailsScreen(e.bookId),
             contentPadding: const EdgeInsets.symmetric(vertical: 16),
             leading: AspectRatio(
               aspectRatio: 1,
@@ -185,6 +188,10 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
       const Duration(milliseconds: 300),
       () => _onSearchFieldSubmitted(value),
     );
+  }
+
+  void goToBookDetailsScreen(String bookId) {
+    context.navigateTo(BookDetailsScreen(bookId: bookId));
   }
 
   Future<void> _onSearchFieldSubmitted(String value) async {
