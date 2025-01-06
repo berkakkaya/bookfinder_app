@@ -29,7 +29,19 @@ abstract class ApiLibrarySubservice {
     required String authHeader,
   });
 
-  Future<ApiResponse<void>> checkWhichListsContainBook(
+  Future<ApiResponse<void>> addBookToList(
+    String bookListId, {
+    required String bookId,
+    required String authHeader,
+  });
+
+  Future<ApiResponse<void>> removeBookFromList(
+    String bookListId, {
+    required String bookId,
+    required String authHeader,
+  });
+
+  Future<ApiResponse<List<String>>> checkWhichListsContainBook(
     String bookId, {
     required String authHeader,
   });
