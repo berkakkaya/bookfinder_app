@@ -13,6 +13,7 @@ import "package:bookfinder_app/widgets/cover_image.dart";
 import "package:bookfinder_app/widgets/custom_bottom_navbar.dart";
 import "package:bookfinder_app/widgets/info_card.dart";
 import "package:bookfinder_app/widgets/outlined_circle.dart";
+import "package:bookfinder_app/widgets/set_book_tracking_modal_sheet.dart";
 import "package:cached_network_image/cached_network_image.dart";
 import "package:flutter/material.dart";
 
@@ -241,101 +242,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   }) async {
     final result = await showModalBottomSheet<BookTrackingStatusChoice>(
       context: context,
-      builder: (context) {
-        const double circleSize = 24;
-        const double borderWidth = 1.3;
-        const Color borderColor = colorLightBlack;
-
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                "Kitabı takip et",
-                style: context.theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            ListTile(
-              title: Text("Takipten çıkar"),
-              leading: OutlinedCircle(
-                backgroundColor: Colors.transparent,
-                size: circleSize,
-                borderWidth: borderWidth,
-                borderColor: borderColor,
-              ),
-              onTap: () {
-                Navigator.of(context).pop<BookTrackingStatusChoice>(
-                  (choice: null),
-                );
-              },
-            ),
-            ListTile(
-              title: Text("Okunacak"),
-              leading: OutlinedCircle(
-                backgroundColor: colorBlue,
-                size: circleSize,
-                borderWidth: borderWidth,
-                borderColor: borderColor,
-              ),
-              onTap: () {
-                Navigator.of(context).pop<BookTrackingStatusChoice>(
-                  (choice: BookTrackingStatus.willRead),
-                );
-              },
-            ),
-            ListTile(
-              title: Text("Devam ediliyor"),
-              leading: OutlinedCircle(
-                backgroundColor: colorOrange,
-                size: circleSize,
-                borderWidth: borderWidth,
-                borderColor: borderColor,
-              ),
-              onTap: () {
-                Navigator.of(context).pop<BookTrackingStatusChoice>(
-                  (choice: BookTrackingStatus.reading),
-                );
-              },
-            ),
-            ListTile(
-              title: Text("Tamamlandı"),
-              leading: OutlinedCircle(
-                backgroundColor: colorGreen,
-                size: circleSize,
-                borderWidth: borderWidth,
-                borderColor: borderColor,
-              ),
-              onTap: () {
-                Navigator.of(context).pop<BookTrackingStatusChoice>(
-                  (choice: BookTrackingStatus.completed),
-                );
-              },
-            ),
-            ListTile(
-              title: Text("Bırakıldı"),
-              leading: OutlinedCircle(
-                backgroundColor: colorRed,
-                size: circleSize,
-                borderWidth: borderWidth,
-                borderColor: borderColor,
-              ),
-              onTap: () {
-                Navigator.of(context).pop<BookTrackingStatusChoice>(
-                  (choice: BookTrackingStatus.dropped),
-                );
-              },
-            ),
-            SizedBox(height: 16),
-          ],
-        );
-      },
+      builder: (context) => SetBookTrackingModalSheet(),
     );
 
     if (result == null) return;
