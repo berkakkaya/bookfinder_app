@@ -85,8 +85,14 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
     } else {
       content = Column(
         children: searchResults!.map((e) {
+          final heroTag = "bookCover:${e.bookId}";
+
           return ListTile(
-            onTap: () => goToBookDetailsScreen(e.bookId, e.thumbnailUrl),
+            onTap: () => goToBookDetailsScreen(
+              bookId: e.bookId,
+              thumbnailUrl: e.thumbnailUrl,
+              heroTag: heroTag,
+            ),
             contentPadding: const EdgeInsets.symmetric(vertical: 16),
             leading: AspectRatio(
               aspectRatio: 1,
@@ -110,7 +116,7 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
                 imageBuilder: (_, imageProvider) => CoverImage(
                   imageProvider: imageProvider,
                   borderRadius: 8,
-                  heroTag: "bookCover:${e.bookId}",
+                  heroTag: heroTag,
                 ),
                 fadeInDuration: const Duration(milliseconds: 200),
                 fadeOutDuration: const Duration(milliseconds: 200),
@@ -191,10 +197,15 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
     );
   }
 
-  void goToBookDetailsScreen(String bookId, String thumbnailUrl) {
+  void goToBookDetailsScreen({
+    required String bookId,
+    required String thumbnailUrl,
+    required String heroTag,
+  }) {
     context.navigateTo(BookDetailsScreen(
       bookId: bookId,
       thumbnailUrl: thumbnailUrl,
+      heroTag: heroTag,
     ));
   }
 
