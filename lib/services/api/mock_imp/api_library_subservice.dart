@@ -159,9 +159,13 @@ class MockApiLibrarySubservice implements ApiLibrarySubservice {
   }) {
     final authorId = authHeader.split(" ").last;
 
-    final listIndex = _db.mockBookListItems.indexWhere(
-      (list) => list.bookListId == bookListId && list.authorId == authorId,
-    );
+    final listIndex = _db.mockBookListItems.indexWhere((list) {
+      if (bookListId == "_likedBooks") {
+        return list.internalTitle == "_likedBooks";
+      }
+
+      return list.bookListId == bookListId && list.authorId == authorId;
+    });
 
     if (listIndex == -1) {
       return Future.value(ApiResponse(
@@ -208,9 +212,13 @@ class MockApiLibrarySubservice implements ApiLibrarySubservice {
   }) {
     final authorId = authHeader.split(" ").last;
 
-    final listIndex = _db.mockBookListItems.indexWhere(
-      (list) => list.bookListId == bookListId && list.authorId == authorId,
-    );
+    final listIndex = _db.mockBookListItems.indexWhere((list) {
+      if (bookListId == "_likedBooks") {
+        return list.internalTitle == "_likedBooks";
+      }
+
+      return list.bookListId == bookListId && list.authorId == authorId;
+    });
 
     if (listIndex == -1) {
       return Future.value(ApiResponse(

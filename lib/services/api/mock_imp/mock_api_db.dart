@@ -7,7 +7,16 @@ class MockApiDb {
   final List<MockUser> mockUsers = [];
   final List<BookData> mockBookDatas = [];
   final List<MockBookTrackingData> mockBookTrackingDatas = [];
-  final List<BookListItemWithBooks> mockBookListItems = [];
+  final List<BookListItemWithBooks> mockBookListItems = [
+    BookListItemWithBooks(
+      bookListId: "1",
+      authorId: "-1",
+      title: "_likedBooks",
+      bookCount: 0,
+      isPrivate: true,
+      books: [],
+    ),
+  ];
 
   MockApiDb({bool fillWithMockDatas = true}) {
     if (fillWithMockDatas) {
