@@ -1,9 +1,7 @@
-import "dart:math";
-
 import "package:bookfinder_app/consts/colors.dart";
-import "package:bookfinder_app/extensions/strings.dart";
 import "package:bookfinder_app/extensions/theming.dart";
 import "package:bookfinder_app/models/library_models.dart";
+import "package:bookfinder_app/widgets/letter_container.dart";
 import "package:flutter/material.dart";
 
 class BookListCard extends StatelessWidget {
@@ -36,22 +34,10 @@ class BookListCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                color: pickRandomColor(),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Center(
-                child: Text(
-                  listItem.title.leadingLetters.take(2).join(),
-                  style: context.theme.textTheme.titleLarge?.copyWith(
-                    color: colorWhite,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+            LetterContainer(
+              text: listItem.title,
+              size: 64,
+              randomSeed: listItem.title.hashCode,
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -109,19 +95,5 @@ class BookListCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Color pickRandomColor() {
-    final random = Random(listItem.bookListId.hashCode);
-
-    final List<Color> colorChoices = [
-      colorBlue,
-      colorGreen,
-      colorPurple,
-      colorRed,
-      colorOrange,
-    ];
-
-    return colorChoices[random.nextInt(colorChoices.length)];
   }
 }
