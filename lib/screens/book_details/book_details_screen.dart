@@ -21,11 +21,13 @@ typedef BookTrackingStatusChoice = ({BookTrackingStatus? choice});
 class BookDetailsScreen extends StatefulWidget {
   final String bookId;
   final String thumbnailUrl;
+  final String? heroTag;
 
   const BookDetailsScreen({
     super.key,
     required this.bookId,
     required this.thumbnailUrl,
+    this.heroTag,
   });
 
   @override
@@ -76,7 +78,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                     imageBuilder: (context, imageProvider) => CoverImage(
                       imageProvider: imageProvider,
                       addBlurredShadow: true,
-                      heroTag: "bookCover:${widget.bookId}",
+                      heroTag: widget.heroTag,
                     ),
                   ),
                 ),
