@@ -47,7 +47,7 @@ class CoverImage extends StatelessWidget {
       }
     }
 
-    final stackWidget = Stack(
+    return Stack(
       children: [
         Positioned.fill(
           top: shadowDownscale,
@@ -78,17 +78,12 @@ class CoverImage extends StatelessWidget {
             ),
           ),
         ),
-        Positioned.fill(child: imageContent),
+        Positioned.fill(
+          child: heroTag != null
+              ? Hero(tag: heroTag!, child: imageContent)
+              : imageContent,
+        ),
       ],
     );
-
-    if (heroTag != null) {
-      return Hero(
-        tag: heroTag!,
-        child: stackWidget,
-      );
-    } else {
-      return stackWidget;
-    }
   }
 }
