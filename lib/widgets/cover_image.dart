@@ -47,7 +47,7 @@ class CoverImage extends StatelessWidget {
       }
     }
 
-    return Stack(
+    final stackWidget = Stack(
       children: [
         Positioned.fill(
           top: shadowDownscale,
@@ -61,26 +61,34 @@ class CoverImage extends StatelessWidget {
                 fit: fit,
               ),
             ),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(
-                sigmaX: 15,
-                sigmaY: 15,
-              ),
-              child: Container(
-                color: Colors.transparent,
+            child: FractionallySizedBox(
+              heightFactor: 1.5,
+              widthFactor: 1.5,
+              child: ClipRRect(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(
+                    sigmaX: 15,
+                    sigmaY: 15,
+                  ),
+                  child: Container(
+                    color: Colors.transparent,
+                  ),
+                ),
               ),
             ),
           ),
         ),
-        Positioned.fill(
-          child: heroTag != null
-              ? Hero(
-                  tag: heroTag!,
-                  child: imageContent,
-                )
-              : imageContent,
-        ),
+        Positioned.fill(child: imageContent),
       ],
     );
+
+    if (heroTag != null) {
+      return Hero(
+        tag: heroTag!,
+        child: stackWidget,
+      );
+    } else {
+      return stackWidget;
+    }
   }
 }
