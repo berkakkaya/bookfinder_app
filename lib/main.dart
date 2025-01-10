@@ -136,6 +136,40 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
+        checkboxTheme: CheckboxThemeData(
+          fillColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.disabled)) {
+              return colorGray;
+            }
+
+            if (states.contains(WidgetState.selected)) {
+              return colorLightBlack;
+            }
+
+            return Colors.transparent;
+          }),
+          checkColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.disabled)) {
+              return colorGray;
+            }
+
+            return colorWhite;
+          }),
+          overlayColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.disabled)) {
+              return colorGray;
+            }
+
+            return colorLightBlack;
+          }),
+          side: BorderSide(
+            color: colorLightBlack,
+            width: 2,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ),
       ),
       navigatorKey: navigatorKey,
       home: const InitScreen(),
