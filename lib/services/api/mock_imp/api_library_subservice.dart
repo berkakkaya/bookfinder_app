@@ -50,7 +50,7 @@ class MockApiLibrarySubservice implements ApiLibrarySubservice {
 
     _db.mockBookListItems.add(newBookList);
 
-    return Future.value(ApiResponse(status: ResponseStatus.ok));
+    return Future.value(ApiResponse(status: ResponseStatus.created));
   }
 
   @override
