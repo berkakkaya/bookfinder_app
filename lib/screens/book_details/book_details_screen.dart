@@ -16,6 +16,8 @@ import "package:bookfinder_app/widgets/outlined_circle.dart";
 import "package:cached_network_image/cached_network_image.dart";
 import "package:flutter/material.dart";
 
+typedef BookTrackingStatusChoice = ({BookTrackingStatus? choice});
+
 class BookDetailsScreen extends StatefulWidget {
   final String bookId;
   final String thumbnailUrl;
@@ -235,9 +237,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   Future<void> setBookTrackData({
     required BookTrackingStatus? oldStatus,
   }) async {
-    bool userMadeChoice = false;
-
-    final newChoice = await showModalBottomSheet<BookTrackingStatus>(
+    final result = await showModalBottomSheet<BookTrackingStatusChoice>(
       context: context,
       builder: (context) {
         const double circleSize = 24;
@@ -269,8 +269,9 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                 borderColor: borderColor,
               ),
               onTap: () {
-                userMadeChoice = true;
-                Navigator.of(context).pop(null);
+                Navigator.of(context).pop<BookTrackingStatusChoice>(
+                  (choice: null),
+                );
               },
             ),
             ListTile(
@@ -282,8 +283,9 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                 borderColor: borderColor,
               ),
               onTap: () {
-                userMadeChoice = true;
-                Navigator.of(context).pop(BookTrackingStatus.willRead);
+                Navigator.of(context).pop<BookTrackingStatusChoice>(
+                  (choice: BookTrackingStatus.willRead),
+                );
               },
             ),
             ListTile(
@@ -295,8 +297,9 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                 borderColor: borderColor,
               ),
               onTap: () {
-                userMadeChoice = true;
-                Navigator.of(context).pop(BookTrackingStatus.reading);
+                Navigator.of(context).pop<BookTrackingStatusChoice>(
+                  (choice: BookTrackingStatus.reading),
+                );
               },
             ),
             ListTile(
@@ -308,8 +311,9 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                 borderColor: borderColor,
               ),
               onTap: () {
-                userMadeChoice = true;
-                Navigator.of(context).pop(BookTrackingStatus.completed);
+                Navigator.of(context).pop<BookTrackingStatusChoice>(
+                  (choice: BookTrackingStatus.completed),
+                );
               },
             ),
             ListTile(
@@ -321,8 +325,9 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                 borderColor: borderColor,
               ),
               onTap: () {
-                userMadeChoice = true;
-                Navigator.of(context).pop(BookTrackingStatus.dropped);
+                Navigator.of(context).pop<BookTrackingStatusChoice>(
+                  (choice: BookTrackingStatus.dropped),
+                );
               },
             ),
             SizedBox(height: 16),
@@ -331,11 +336,13 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
       },
     );
 
-    if (!userMadeChoice) return;
-    if (newChoice == oldStatus) return;
+    if (result == null) return;
+
+    final choice = result.choice;
+    if (choice == oldStatus) return;
 
     final response = await withAuth((authHeader) {
-      if (newChoice == null) {
+      if (choice == null) {
         return ApiServiceProvider.i.bookTracking.removeBookTrackingData(
           widget.bookId,
           authHeader: authHeader,
@@ -344,7 +351,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
 
       return ApiServiceProvider.i.bookTracking.updateBookTrackingData(
         bookId: widget.bookId,
-        status: newChoice,
+        status: choice,
         authHeader: authHeader,
       );
     });
