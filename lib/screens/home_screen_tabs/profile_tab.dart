@@ -1,13 +1,13 @@
 import "package:bookfinder_app/consts/colors.dart";
 import "package:bookfinder_app/extensions/navigation.dart";
 import "package:bookfinder_app/extensions/snackbars.dart";
+import "package:bookfinder_app/extensions/strings.dart";
 import "package:bookfinder_app/extensions/theming.dart";
 import "package:bookfinder_app/models/api_response.dart";
 import "package:bookfinder_app/models/user_models.dart";
 import "package:bookfinder_app/services/api/api_service_provider.dart";
 import "package:bookfinder_app/services/logging/logging_service_provider.dart";
 import "package:bookfinder_app/utils/auth_utils.dart";
-import "package:bookfinder_app/utils/parsing_utils.dart";
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 
@@ -98,7 +98,7 @@ class _ProfileTabState extends State<ProfileTab> {
                 backgroundColor: colorGray,
                 // Put first two letters of the name and surname
                 child: Text(
-                  parseLeadingLetters(user.nameSurname, count: 2),
+                  user.nameSurname.leadingLetters.take(2).join(),
                   style: Theme.of(context).textTheme.displayLarge?.copyWith(
                         color: colorWhite,
                       ),
