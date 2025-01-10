@@ -41,9 +41,18 @@ class _ExploreTabState extends State<ExploreTab> {
 
   @override
   Widget build(BuildContext context) {
-    final Widget innerChild = switch (recommendations.isEmpty) {
-      true => Center(child: CircularProgressIndicator()),
-      false => Column(
+    if (recommendations.isEmpty) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    return Scaffold(
+      body: Padding(
+        padding: EdgeInsets.all(32),
+        child: Column(
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -134,12 +143,6 @@ class _ExploreTabState extends State<ExploreTab> {
             ),
           ],
         ),
-    };
-
-    return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.all(32),
-        child: innerChild,
       ),
     );
   }
