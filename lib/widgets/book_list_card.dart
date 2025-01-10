@@ -1,9 +1,9 @@
 import "dart:math";
 
 import "package:bookfinder_app/consts/colors.dart";
+import "package:bookfinder_app/extensions/strings.dart";
 import "package:bookfinder_app/extensions/theming.dart";
 import "package:bookfinder_app/models/library_models.dart";
-import "package:bookfinder_app/utils/parsing_utils.dart";
 import "package:flutter/material.dart";
 
 class BookListCard extends StatelessWidget {
@@ -41,7 +41,7 @@ class BookListCard extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                parseLeadingLetters(listItem.title, count: 2),
+                listItem.title.leadingLetters.take(2).join(),
                 style: context.theme.textTheme.titleLarge?.copyWith(
                   color: colorWhite,
                   fontWeight: FontWeight.bold,
