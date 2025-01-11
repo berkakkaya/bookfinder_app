@@ -41,7 +41,7 @@ abstract class ApiLibrarySubservice {
     required String authHeader,
   });
 
-  Future<ApiResponse<List<String>>> checkWhichListsContainBook(
+  Future<ApiResponse<List<(BookListItem, bool)>>> fetchListContainStatusOfBook(
     String bookId, {
     required String authHeader,
   });

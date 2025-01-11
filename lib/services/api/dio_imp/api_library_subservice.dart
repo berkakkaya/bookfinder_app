@@ -9,11 +9,11 @@ class DioApiLibrarySubservice implements ApiLibrarySubservice {
   DioApiLibrarySubservice(this._dio);
 
   @override
-  Future<ApiResponse<List<String>>> checkWhichListsContainBook(
+  Future<ApiResponse<List<(BookListItem, bool)>>> fetchListContainStatusOfBook(
     String bookId, {
     required String authHeader,
   }) {
-    // TODO: implement checkWhichListsContainBook
+    // TODO: implement fetchListContainStatusOfBook
     throw UnimplementedError();
   }
 
