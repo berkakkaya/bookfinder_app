@@ -115,14 +115,18 @@ class MockApiLibrarySubservice implements ApiLibrarySubservice {
 
   @override
   Future<ApiResponse<List<BookListItem>>> getBookLists({
+    String? targetUserId,
     required String authHeader,
   }) {
     final authorId = authHeader.split(" ").last;
 
-    final foundLists = _db.mockBookListItems
-        .where((list) =>
-            list.authorId == authorId || list.internalTitle == "_likedBooks")
-        .toList();
+    final foundLists = _db.mockBookListItems.where((list) {
+      if (targetUserId != null) {
+        return list.authorId == targetUserId && list.isPrivate == false;
+      }
+
+      return list.authorId == authorId || list.internalTitle == "_likedBooks";
+    }).toList();
 
     return Future.value(ApiResponse(
       status: ResponseStatus.ok,

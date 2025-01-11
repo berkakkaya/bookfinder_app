@@ -3,6 +3,7 @@ import "package:bookfinder_app/models/library_models.dart";
 
 abstract class ApiLibrarySubservice {
   Future<ApiResponse<List<BookListItem>>> getBookLists({
+    String? targetUserId,
     required String authHeader,
   });
 

@@ -47,6 +47,7 @@ class DioApiLibrarySubservice implements ApiLibrarySubservice {
 
   @override
   Future<ApiResponse<List<BookListItem>>> getBookLists({
+    String? targetUserId,
     required String authHeader,
   }) {
     // TODO: implement getBookLists
