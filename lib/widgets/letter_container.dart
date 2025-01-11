@@ -37,6 +37,7 @@ class LetterContainer extends StatelessWidget {
               style: context.theme.textTheme.titleLarge?.copyWith(
                 color: colorWhite,
                 fontWeight: FontWeight.bold,
+                fontSize: size / 3,
               ),
             ),
       ),
