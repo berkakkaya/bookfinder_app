@@ -9,6 +9,7 @@ import "package:bookfinder_app/services/api/api_service_provider.dart";
 import "package:bookfinder_app/services/logging/logging_service_provider.dart";
 import "package:bookfinder_app/utils/auth_utils.dart";
 import "package:bookfinder_app/utils/convert_utils.dart";
+import "package:bookfinder_app/widgets/add_remove_book_modal.dart";
 import "package:bookfinder_app/widgets/cover_image.dart";
 import "package:bookfinder_app/widgets/custom_bottom_navbar.dart";
 import "package:bookfinder_app/widgets/info_card.dart";
@@ -136,7 +137,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        onPressed: () {},
+                        onPressed: addBookToList,
                       ),
                     ),
                   ],
@@ -286,6 +287,41 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
       setState(() {
         bookTrackingDataFuture = fetchBookTrackingData();
       });
+    }
+  }
+
+  Future<void> addBookToList() async {
+    final bookListsResponse = await withAuth((authHeader) {
+      return ApiServiceProvider.i.library.fetchListContainStatusOfBook(
+        widget.bookId,
+        authHeader: authHeader,
+      );
+    });
+
+    if (bookListsResponse.status != ResponseStatus.ok) {
+      LoggingServiceProvider.i.error(
+        "Failed to fetch book lists (response: ${bookListsResponse.status})",
+      );
+
+      if (mounted) {
+        context.showSnackbar(
+          "Kitap listeleri alınamadı.",
+          type: SnackbarType.error,
+        );
+      }
+
+      return;
+    }
+
+    if (mounted) {
+      await showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (context) => AddRemoveBookModal(
+          bookId: widget.bookId,
+          bookContainStatus: bookListsResponse.data!,
+        ),
+      );
     }
   }
 
