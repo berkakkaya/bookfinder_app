@@ -3,6 +3,7 @@ import "package:bookfinder_app/extensions/snackbars.dart";
 import "package:bookfinder_app/extensions/theming.dart";
 import "package:bookfinder_app/models/api_response.dart";
 import "package:bookfinder_app/models/library_models.dart";
+import "package:bookfinder_app/screens/book_lists/tracked_books_screen.dart";
 import "package:bookfinder_app/services/api/api_service_provider.dart";
 import "package:bookfinder_app/services/logging/logging_service_provider.dart";
 import "package:bookfinder_app/utils/auth_utils.dart";
@@ -186,7 +187,7 @@ class _LibraryTabState extends State<LibraryTab> {
   }
 
   void goToTrackedBooksScreen() {
-    // TODO: Implement navigation to TrackedBooksScreen
+    context.navigateTo(TrackedBooksScreen());
   }
 
   void goToBookListScreen(BookListItem bookListItem) {
