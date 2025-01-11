@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: "Bookfinder",
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
+        colorSchemeSeed: colorLightBlack,
         useMaterial3: true,
         textTheme: GoogleFonts.interTextTheme(),
         scaffoldBackgroundColor: colorBackground,
@@ -168,6 +168,15 @@ class MyApp extends StatelessWidget {
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(4),
+          ),
+        ),
+        chipTheme: ChipThemeData(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(96),
+          ),
+          side: BorderSide(
+            color: Colors.black12,
+            width: 1,
           ),
         ),
       ),
