@@ -115,7 +115,8 @@ class MockApiLibrarySubservice implements ApiLibrarySubservice {
     final authorId = authHeader.split(" ").last;
 
     final foundLists = _db.mockBookListItems
-        .where((list) => list.authorId == authorId)
+        .where((list) =>
+            list.authorId == authorId || list.internalTitle == "_likedBooks")
         .toList();
 
     return Future.value(ApiResponse(
