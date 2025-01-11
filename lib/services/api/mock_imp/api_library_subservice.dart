@@ -11,20 +11,21 @@ class MockApiLibrarySubservice implements ApiLibrarySubservice {
   MockApiLibrarySubservice(this._db);
 
   @override
-  Future<ApiResponse<List<String>>> checkWhichListsContainBook(
+  Future<ApiResponse<List<(BookListItem, bool)>>> fetchListContainStatusOfBook(
     String bookId, {
     required String authHeader,
   }) {
-    final foundListIds = _db.mockBookListItems
-        .where((list) {
-          return list.books.any((book) => book.bookId == bookId);
-        })
-        .map((list) => list.bookListId)
+    final userId = authHeader.split(" ").last;
+
+    final containStatus = _db.mockBookListItems
+        .where((list) =>
+            list.authorId == userId || list.internalTitle == "_likedBooks")
+        .map((list) => (list, list.books.any((book) => book.bookId == bookId)))
         .toList();
 
     return Future.value(ApiResponse(
       status: ResponseStatus.ok,
-      data: foundListIds,
+      data: containStatus,
     ));
   }
 
