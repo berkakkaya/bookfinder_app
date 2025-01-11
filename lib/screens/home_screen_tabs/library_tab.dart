@@ -192,6 +192,6 @@ class _LibraryTabState extends State<LibraryTab> {
   }
 
   void goToBookListScreen(BookListItem bookListItem) {
-    // TODO: Implement navigation to BookListDetailsScreen
+    context.navigateTo(BookListScreen(preitem: bookListItem));
   }
 }
