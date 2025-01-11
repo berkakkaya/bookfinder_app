@@ -38,6 +38,15 @@ class BookListCard extends StatelessWidget {
               text: listItem.title,
               size: 64,
               randomSeed: listItem.title.hashCode,
+              contentOverride: listItem.internalTitle == "_likedBooks"
+                  ? Icon(
+                      Icons.favorite,
+                      color: colorWhite,
+                      size: 32,
+                    )
+                  : null,
+              colorOverride:
+                  listItem.internalTitle == "_likedBooks" ? colorRed : null,
             ),
             const SizedBox(width: 16),
             Expanded(

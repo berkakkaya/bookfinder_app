@@ -8,12 +8,16 @@ import "package:flutter/material.dart";
 class LetterContainer extends StatelessWidget {
   final String text;
   final double size;
+  final Widget? contentOverride;
+  final Color? colorOverride;
   final int? randomSeed;
 
   const LetterContainer({
     super.key,
     required this.text,
     required this.size,
+    this.contentOverride,
+    this.colorOverride,
     this.randomSeed,
   });
 
@@ -23,17 +27,18 @@ class LetterContainer extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: pickRandomColor(),
+        color: colorOverride ?? pickRandomColor(),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Center(
-        child: Text(
-          text.leadingLetters.take(2).join(),
-          style: context.theme.textTheme.titleLarge?.copyWith(
-            color: colorWhite,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        child: contentOverride ??
+            Text(
+              text.leadingLetters.take(2).join(),
+              style: context.theme.textTheme.titleLarge?.copyWith(
+                color: colorWhite,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
       ),
     );
   }
