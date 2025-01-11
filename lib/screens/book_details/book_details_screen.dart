@@ -9,12 +9,12 @@ import "package:bookfinder_app/services/api/api_service_provider.dart";
 import "package:bookfinder_app/services/logging/logging_service_provider.dart";
 import "package:bookfinder_app/utils/auth_utils.dart";
 import "package:bookfinder_app/utils/convert_utils.dart";
-import "package:bookfinder_app/widgets/add_remove_book_modal.dart";
+import "package:bookfinder_app/widgets/modals/add_remove_book_modal.dart";
 import "package:bookfinder_app/widgets/cover_image.dart";
 import "package:bookfinder_app/widgets/custom_bottom_navbar.dart";
-import "package:bookfinder_app/widgets/info_card.dart";
+import "package:bookfinder_app/widgets/cards/info_card.dart";
 import "package:bookfinder_app/widgets/outlined_circle.dart";
-import "package:bookfinder_app/widgets/set_book_tracking_modal_sheet.dart";
+import "package:bookfinder_app/widgets/modals/set_book_tracking_modal_sheet.dart";
 import "package:cached_network_image/cached_network_image.dart";
 import "package:flutter/material.dart";
 

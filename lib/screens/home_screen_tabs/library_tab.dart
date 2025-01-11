@@ -3,12 +3,13 @@ import "package:bookfinder_app/extensions/snackbars.dart";
 import "package:bookfinder_app/extensions/theming.dart";
 import "package:bookfinder_app/models/api_response.dart";
 import "package:bookfinder_app/models/library_models.dart";
+import "package:bookfinder_app/screens/book_lists/book_list_screen.dart";
 import "package:bookfinder_app/screens/book_lists/tracked_books_screen.dart";
 import "package:bookfinder_app/services/api/api_service_provider.dart";
 import "package:bookfinder_app/services/logging/logging_service_provider.dart";
 import "package:bookfinder_app/utils/auth_utils.dart";
-import "package:bookfinder_app/widgets/book_list_card.dart";
-import "package:bookfinder_app/widgets/create_list_modal_sheet.dart";
+import "package:bookfinder_app/widgets/cards/book_list_card.dart";
+import "package:bookfinder_app/widgets/modals/create_list_modal_sheet.dart";
 import "package:bookfinder_app/widgets/tracked_book_page_button.dart";
 import "package:flutter/material.dart";
 
