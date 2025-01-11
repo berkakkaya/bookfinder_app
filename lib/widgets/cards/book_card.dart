@@ -5,14 +5,20 @@ import "package:bookfinder_app/widgets/cover_image.dart";
 import "package:cached_network_image/cached_network_image.dart";
 import "package:flutter/material.dart";
 
-class TrackedBookCard extends StatelessWidget {
-  final BookTrackingDataWithBookData data;
+class BookCard extends StatelessWidget {
+  final String title;
+  final String authors;
+  final String thumbnailUrl;
+  final BookTrackingStatus? trackingStatus;
   final String? heroTag;
   final void Function() onTap;
 
-  const TrackedBookCard({
+  const BookCard({
     super.key,
-    required this.data,
+    required this.title,
+    required this.authors,
+    required this.thumbnailUrl,
+    required this.trackingStatus,
     this.heroTag,
     required this.onTap,
   });
@@ -44,7 +50,7 @@ class TrackedBookCard extends StatelessWidget {
               child: AspectRatio(
                 aspectRatio: 3 / 4,
                 child: CachedNetworkImage(
-                  imageUrl: data.bookThumbnailUrl,
+                  imageUrl: thumbnailUrl,
                   progressIndicatorBuilder: (context, url, progress) {
                     return Center(
                       child: CircularProgressIndicator(
@@ -80,7 +86,7 @@ class TrackedBookCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    data.bookTitle,
+                    title,
                     style: context.theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -89,32 +95,34 @@ class TrackedBookCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    data.bookAuthors.join(", "),
+                    authors,
                     style: context.theme.textTheme.bodyMedium?.copyWith(
                       color: colorGray,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.circle,
-                        size: 16,
-                        color: getColor(data.status),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        getLabel(data.status),
-                        style: context.theme.textTheme.bodyMedium?.copyWith(
-                          color: colorGray,
+                  if (trackingStatus != null) ...[
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.circle,
+                          size: 16,
+                          color: getColor(trackingStatus!),
                         ),
-                      ),
-                    ],
-                  ),
+                        const SizedBox(width: 8),
+                        Text(
+                          getLabel(trackingStatus!),
+                          style: context.theme.textTheme.bodyMedium?.copyWith(
+                            color: colorGray,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),

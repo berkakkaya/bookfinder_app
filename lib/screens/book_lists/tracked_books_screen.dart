@@ -9,7 +9,7 @@ import "package:bookfinder_app/services/api/api_service_provider.dart";
 import "package:bookfinder_app/services/logging/logging_service_provider.dart";
 import "package:bookfinder_app/utils/auth_utils.dart";
 import "package:bookfinder_app/widgets/custom_bottom_navbar.dart";
-import "package:bookfinder_app/widgets/cards/tracked_book_card.dart";
+import "package:bookfinder_app/widgets/cards/book_card.dart";
 import "package:flutter/material.dart";
 import "package:flutter_svg/flutter_svg.dart";
 
@@ -180,8 +180,11 @@ class _TrackedBooksScreenState extends State<TrackedBooksScreen> {
   Widget getTrackedBookCard(BookTrackingDataWithBookData data) {
     final heroTag = "tracked_book:${data.bookId}";
 
-    return TrackedBookCard(
-      data: data,
+    return BookCard(
+      title: data.bookTitle,
+      authors: data.bookAuthors.join(", "),
+      thumbnailUrl: data.bookThumbnailUrl,
+      trackingStatus: data.status,
       heroTag: heroTag,
       onTap: () => goToBookDetailsScreen(data, heroTag: heroTag),
     );
