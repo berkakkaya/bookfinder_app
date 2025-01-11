@@ -93,9 +93,13 @@ class MockApiLibrarySubservice implements ApiLibrarySubservice {
   }) {
     final authorId = authHeader.split(" ").last;
 
-    final foundList = _db.mockBookListItems.firstWhereOrNull(
-      (list) => list.bookListId == bookListId && list.authorId == authorId,
-    );
+    final foundList = _db.mockBookListItems.firstWhereOrNull((list) {
+      if (bookListId == "_likedBooks") {
+        return list.internalTitle == "_likedBooks";
+      }
+
+      return list.bookListId == bookListId && list.authorId == authorId;
+    });
 
     if (foundList == null) {
       return Future.value(ApiResponse(
