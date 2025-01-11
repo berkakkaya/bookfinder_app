@@ -10,6 +10,7 @@ class BookCard extends StatelessWidget {
   final String authors;
   final String thumbnailUrl;
   final BookTrackingStatus? trackingStatus;
+  final Widget? trailing;
   final String? heroTag;
   final void Function() onTap;
 
@@ -18,7 +19,8 @@ class BookCard extends StatelessWidget {
     required this.title,
     required this.authors,
     required this.thumbnailUrl,
-    required this.trackingStatus,
+    this.trackingStatus,
+    this.trailing,
     this.heroTag,
     required this.onTap,
   });
@@ -126,6 +128,10 @@ class BookCard extends StatelessWidget {
                 ],
               ),
             ),
+            if (trailing != null) ...[
+              const SizedBox(width: 16),
+              trailing!,
+            ],
           ],
         ),
       ),
