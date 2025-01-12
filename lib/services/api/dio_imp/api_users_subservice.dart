@@ -32,4 +32,13 @@ class DioApiUsersSubservice implements ApiUsersSubservice {
     // TODO: implement unfollowUser
     throw UnimplementedError();
   }
+
+  @override
+  Future<ApiResponse<bool>> checkFollowStatus(
+    String userId, {
+    required String authHeader,
+  }) {
+    // TODO: implement checkFollowStatus
+    throw UnimplementedError();
+  }
 }

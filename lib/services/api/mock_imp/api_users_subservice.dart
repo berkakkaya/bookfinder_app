@@ -85,4 +85,21 @@ class MockApiUsersSubservice implements ApiUsersSubservice {
       status: ResponseStatus.ok,
     ));
   }
+
+  @override
+  Future<ApiResponse<bool>> checkFollowStatus(
+    String userId, {
+    required String authHeader,
+  }) {
+    final requesterUserId = authHeader.split(" ").last;
+    final requesterUser = _db.mockUsers.firstWhere(
+      (u) => u.userId == requesterUserId,
+    );
+
+    final isFollowing = requesterUser.followedUsers.contains(userId);
+    return Future.value(ApiResponse(
+      status: ResponseStatus.ok,
+      data: isFollowing,
+    ));
+  }
 }

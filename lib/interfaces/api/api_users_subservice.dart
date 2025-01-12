@@ -16,4 +16,9 @@ abstract class ApiUsersSubservice {
     String userId, {
     required String authHeader,
   });
+
+  Future<ApiResponse<bool>> checkFollowStatus(
+    String userId, {
+    required String authHeader,
+  });
 }
