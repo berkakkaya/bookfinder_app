@@ -18,8 +18,7 @@ class MockApiLibrarySubservice implements ApiLibrarySubservice {
     final userId = authHeader.split(" ").last;
 
     final containStatus = _db.mockBookListItems
-        .where((list) =>
-            list.authorId == userId || list.internalTitle == "_likedBooks")
+        .where((list) => list.authorId == userId)
         .map((list) => (list, list.books.any((book) => book.bookId == bookId)))
         .toList();
 
@@ -35,6 +34,12 @@ class MockApiLibrarySubservice implements ApiLibrarySubservice {
     required bool isPrivate,
     required String authHeader,
   }) {
+    if (title == "_likedBooks") {
+      return Future.value(ApiResponse(
+        status: ResponseStatus.badRequest,
+      ));
+    }
+
     final authorId = authHeader.split(" ").last;
     final int newBookListId = _db.mockBookListItems.isNotEmpty
         ? int.parse(_db.mockBookListItems.last.bookListId) + 1
@@ -95,11 +100,29 @@ class MockApiLibrarySubservice implements ApiLibrarySubservice {
 
     final foundList = _db.mockBookListItems.firstWhereOrNull((list) {
       if (bookListId == "_likedBooks") {
-        return list.internalTitle == "_likedBooks";
+        // Liked books list is a special list that is not created by the user.
+        // Check if we are currently on the liked books list and authorId is
+        // the same.
+        return list.internalTitle == "_likedBooks" && list.authorId == authorId;
       }
 
-      return list.bookListId == bookListId && list.authorId == authorId;
+      // Check if IDs match
+      if (list.bookListId != bookListId) {
+        return false;
+      }
+
+      // If the list is public, allow access
+      if (list.isPrivate == false) {
+        return true;
+      }
+
+      // If the list is private, only allow access if the authorId matches
+      return list.authorId == authorId;
     });
+
+    if (bookListId == "_likedBooks") {
+      assert(foundList != null, "Liked books list should always exist.");
+    }
 
     if (foundList == null) {
       return Future.value(ApiResponse(
@@ -121,11 +144,7 @@ class MockApiLibrarySubservice implements ApiLibrarySubservice {
     final authorId = authHeader.split(" ").last;
 
     final foundLists = _db.mockBookListItems.where((list) {
-      if (targetUserId != null) {
-        return list.authorId == targetUserId && list.isPrivate == false;
-      }
-
-      return list.authorId == authorId || list.internalTitle == "_likedBooks";
+      return list.authorId == authorId;
     }).toList();
 
     return Future.value(ApiResponse(
@@ -141,11 +160,17 @@ class MockApiLibrarySubservice implements ApiLibrarySubservice {
     required bool isPrivate,
     required String authHeader,
   }) {
+    if (title == "_likedBooks") {
+      return Future.value(ApiResponse(
+        status: ResponseStatus.badRequest,
+      ));
+    }
+
     final authorId = authHeader.split(" ").last;
 
-    final listIndex = _db.mockBookListItems.indexWhere(
-      (list) => list.bookListId == bookListId && list.authorId == authorId,
-    );
+    final listIndex = _db.mockBookListItems.indexWhere((list) {
+      return list.bookListId == bookListId && list.authorId == authorId;
+    });
 
     if (listIndex == -1) {
       return Future.value(ApiResponse(
@@ -171,7 +196,7 @@ class MockApiLibrarySubservice implements ApiLibrarySubservice {
 
     final listIndex = _db.mockBookListItems.indexWhere((list) {
       if (bookListId == "_likedBooks") {
-        return list.internalTitle == "_likedBooks";
+        return list.internalTitle == "_likedBooks" && list.authorId == authorId;
       }
 
       return list.bookListId == bookListId && list.authorId == authorId;
@@ -224,7 +249,7 @@ class MockApiLibrarySubservice implements ApiLibrarySubservice {
 
     final listIndex = _db.mockBookListItems.indexWhere((list) {
       if (bookListId == "_likedBooks") {
-        return list.internalTitle == "_likedBooks";
+        return list.internalTitle == "_likedBooks" && list.authorId == authorId;
       }
 
       return list.bookListId == bookListId && list.authorId == authorId;
