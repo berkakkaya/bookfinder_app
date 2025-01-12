@@ -115,7 +115,7 @@ class _HomepageTabState extends State<HomepageTab> {
                           ),
                         ),
                         ChoiceChip(
-                          label: Text("Tümü"),
+                          label: Text("Herkes"),
                           selected: showFeedsFromOtherUsers,
                           onSelected: (_) => changeActivityType(
                             showFeedsFromOtherUsers: true,
