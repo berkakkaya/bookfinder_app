@@ -1,6 +1,7 @@
 import "package:bookfinder_app/interfaces/api/api_auth_subservice.dart";
 import "package:bookfinder_app/interfaces/api/api_bookdatas_subservice.dart";
 import "package:bookfinder_app/interfaces/api/api_booktracking_subservice.dart";
+import "package:bookfinder_app/interfaces/api/api_feed_subservice.dart";
 import "package:bookfinder_app/interfaces/api/api_library_subservice.dart";
 import "package:bookfinder_app/interfaces/api/api_recommendations_subservice.dart";
 import "package:bookfinder_app/interfaces/api/api_users_subservice.dart";
@@ -12,6 +13,7 @@ abstract class ApiService {
   ApiRecommendationsSubservice get recommendations;
   ApiBooktrackingSubservice get bookTracking;
   ApiLibrarySubservice get library;
+  ApiFeedSubservice get feed;
 
   Future<bool> checkApiHealth();
 }

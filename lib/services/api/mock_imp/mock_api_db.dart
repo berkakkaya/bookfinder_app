@@ -1,5 +1,6 @@
 import "package:bookfinder_app/consts/mock_datas.dart" as mock_datas;
 import "package:bookfinder_app/models/bookdata_models.dart";
+import "package:bookfinder_app/models/feed_models.dart";
 import "package:bookfinder_app/models/library_models.dart";
 import "package:bookfinder_app/models/mock_datamodels.dart";
 
@@ -8,6 +9,7 @@ class MockApiDb {
   final List<BookData> mockBookDatas = [];
   final List<MockBookTrackingData> mockBookTrackingDatas = [];
   final List<BookListItemWithBooks> mockBookListItems = [];
+  final List<BaseFeedEntry> mockFeedEntries = [];
 
   MockApiDb({bool fillWithMockDatas = true}) {
     if (fillWithMockDatas) {

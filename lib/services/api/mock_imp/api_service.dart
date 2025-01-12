@@ -2,6 +2,7 @@ import "package:bookfinder_app/interfaces/api/api_service.dart";
 import "package:bookfinder_app/services/api/mock_imp/api_auth_subservice.dart";
 import "package:bookfinder_app/services/api/mock_imp/api_bookdatas_subservice.dart";
 import "package:bookfinder_app/services/api/mock_imp/api_booktracking_subservice.dart";
+import "package:bookfinder_app/services/api/mock_imp/api_feed_subservice.dart";
 import "package:bookfinder_app/services/api/mock_imp/api_library_subservice.dart";
 import "package:bookfinder_app/services/api/mock_imp/api_recommendations_subservice.dart";
 import "package:bookfinder_app/services/api/mock_imp/api_users_subservice.dart";
@@ -16,6 +17,7 @@ class MockApiService implements ApiService {
   final MockApiRecommendationsSubservice _recommendationsSubservice;
   final MockApiBooktrackingSubservice _booktrackingSubservice;
   final MockApiLibrarySubservice _librarySubservice;
+  final MockApiFeedSubservice _feedSubservice;
 
   MockApiService(this.db)
       : _authSubservice = MockApiAuthSubservice(db),
@@ -23,7 +25,8 @@ class MockApiService implements ApiService {
         _bookdatasSubservice = MockApiBookdatasSubservice(db),
         _recommendationsSubservice = MockApiRecommendationsSubservice(db),
         _booktrackingSubservice = MockApiBooktrackingSubservice(db),
-        _librarySubservice = MockApiLibrarySubservice(db);
+        _librarySubservice = MockApiLibrarySubservice(db),
+        _feedSubservice = MockApiFeedSubservice(db);
 
   @override
   MockApiAuthSubservice get auth => _authSubservice;
@@ -43,6 +46,9 @@ class MockApiService implements ApiService {
 
   @override
   MockApiLibrarySubservice get library => _librarySubservice;
+
+  @override
+  MockApiFeedSubservice get feed => _feedSubservice;
 
   @override
   Future<bool> checkApiHealth() {
