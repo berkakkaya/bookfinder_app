@@ -1,10 +1,13 @@
 import "package:bookfinder_app/consts/colors.dart";
+import "package:bookfinder_app/extensions/language_ext.dart";
 import "package:bookfinder_app/extensions/navigation.dart";
 import "package:bookfinder_app/extensions/strings.dart";
 import "package:bookfinder_app/models/feed_models.dart";
 import "package:bookfinder_app/screens/book_lists/book_list_screen.dart";
+import "package:bookfinder_app/screens/profile/profile_screen.dart";
 import "package:bookfinder_app/widgets/cards/book_list_card.dart";
 import "package:flutter/material.dart";
+import "package:intl/intl.dart";
 
 class FeedEntryWidget extends StatelessWidget {
   final BaseFeedEntry feedEntry;
@@ -88,6 +91,15 @@ class FeedEntryWidget extends StatelessWidget {
               ),
             ),
           ],
+          const SizedBox(height: 16),
+          Text(
+            DateFormat("dd MMMM yyyy, HH:mm", context.locale).format(
+              feedEntry.issuedAt,
+            ),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: colorGray,
+                ),
+          )
         ],
       ),
     );
@@ -113,7 +125,9 @@ class FeedEntryWidget extends StatelessWidget {
   }
 
   void goToUserDetailsScreen(BuildContext context) {
-    // TODO: Implement user details screen navigation
+    context.navigateTo(ProfileScreen(
+      userId: feedEntry.issuerUserId,
+    ));
   }
 
   void _goToBookListDetailsScreen(

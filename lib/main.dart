@@ -3,9 +3,13 @@ import "package:bookfinder_app/consts/navigator_key.dart";
 import "package:bookfinder_app/extensions/theming.dart";
 import "package:bookfinder_app/screens/init_screen.dart";
 import "package:flutter/material.dart";
+import "package:flutter_localizations/flutter_localizations.dart";
 import "package:google_fonts/google_fonts.dart";
+import "package:intl/date_symbol_data_local.dart";
 
-void main() {
+void main() async {
+  await initializeDateFormatting("tr_TR");
+
   runApp(const MyApp());
 }
 
@@ -16,6 +20,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Bookfinder",
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale("tr", "TR"),
+      ],
+      locale: const Locale("tr", "TR"),
       theme: ThemeData(
         colorSchemeSeed: colorLightBlack,
         useMaterial3: true,
