@@ -1,6 +1,9 @@
 import "package:bookfinder_app/consts/colors.dart";
+import "package:bookfinder_app/extensions/navigation.dart";
 import "package:bookfinder_app/extensions/strings.dart";
 import "package:bookfinder_app/models/feed_models.dart";
+import "package:bookfinder_app/screens/book_lists/book_list_screen.dart";
+import "package:bookfinder_app/widgets/cards/book_list_card.dart";
 import "package:flutter/material.dart";
 
 class FeedEntryWidget extends StatelessWidget {
@@ -15,7 +18,7 @@ class FeedEntryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Add feed entry type handling
+    const double avatarSize = 60;
 
     return Padding(
       padding: padding,
@@ -29,15 +32,25 @@ class FeedEntryWidget extends StatelessWidget {
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircleAvatar(
-                radius: 24,
-                backgroundColor: colorGray,
-                child: Text(
-                  feedEntry.issuerNameSurname.leadingLetters.take(2).join(),
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: colorWhite,
-                        fontWeight: FontWeight.bold,
-                      ),
+              InkWell(
+                onTap: () => goToUserDetailsScreen(context),
+                customBorder: CircleBorder(),
+                child: Ink(
+                  width: avatarSize,
+                  height: avatarSize,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: colorGray,
+                  ),
+                  child: Center(
+                    child: Text(
+                      feedEntry.issuerNameSurname.leadingLetters.take(2).join(),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: colorWhite,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(width: 16),
@@ -55,7 +68,7 @@ class FeedEntryWidget extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      "bir kitap listesi paylaştı",
+                      descriptionText,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: colorGray,
                           ),
@@ -65,8 +78,52 @@ class FeedEntryWidget extends StatelessWidget {
               ),
             ],
           ),
+          if (feedEntry is BookListPublishFeedEntry) ...[
+            const SizedBox(height: 32),
+            BookListCard(
+              listTitle: (feedEntry as BookListPublishFeedEntry).bookListName,
+              onTap: () => _goToBookListDetailsScreen(
+                context,
+                feedEntry as BookListPublishFeedEntry,
+              ),
+            ),
+          ],
         ],
       ),
     );
+  }
+
+  String get descriptionText {
+    if (feedEntry is BookListPublishFeedEntry) {
+      return "bir kitap listesi paylaştı";
+    } else {
+      return "";
+    }
+  }
+
+  Widget? getDetailsWidget(BuildContext context, BaseFeedEntry entry) {
+    if (entry is BookListPublishFeedEntry) {
+      return BookListCard(
+        listTitle: entry.bookListName,
+        onTap: () => _goToBookListDetailsScreen(context, entry),
+      );
+    } else {
+      return null;
+    }
+  }
+
+  void goToUserDetailsScreen(BuildContext context) {
+    // TODO: Implement user details screen navigation
+  }
+
+  void _goToBookListDetailsScreen(
+    BuildContext context,
+    BookListPublishFeedEntry entry,
+  ) {
+    context.navigateTo(BookListScreen(
+      bookListId: entry.bookListId,
+      cachedListName: entry.bookListName,
+      cacheIsFavoritesList: false,
+    ));
   }
 }
