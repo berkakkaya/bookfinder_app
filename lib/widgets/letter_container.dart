@@ -1,8 +1,8 @@
-import "dart:math";
-
 import "package:bookfinder_app/consts/colors.dart";
+import "package:bookfinder_app/extensions/lists.dart";
 import "package:bookfinder_app/extensions/strings.dart";
 import "package:bookfinder_app/extensions/theming.dart";
+import "package:bookfinder_app/utils/convert_utils.dart";
 import "package:flutter/material.dart";
 
 class LetterContainer extends StatelessWidget {
@@ -11,6 +11,7 @@ class LetterContainer extends StatelessWidget {
   final Widget? contentOverride;
   final Color? colorOverride;
   final int? randomSeed;
+  final String? heroTag;
 
   const LetterContainer({
     super.key,
@@ -19,11 +20,12 @@ class LetterContainer extends StatelessWidget {
     this.contentOverride,
     this.colorOverride,
     this.randomSeed,
+    this.heroTag,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final content = Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
@@ -42,19 +44,19 @@ class LetterContainer extends StatelessWidget {
             ),
       ),
     );
+
+    return heroTag != null ? Hero(tag: heroTag!, child: content) : content;
   }
 
   Color pickRandomColor() {
-    final random = Random(randomSeed);
+    final seed = generateSeedFromString(text);
 
-    final List<Color> colorChoices = [
+    return [
       colorBlue,
       colorGreen,
       colorPurple,
       colorRed,
       colorOrange,
-    ];
-
-    return colorChoices[random.nextInt(colorChoices.length)];
+    ].pickRandom(1, seed: seed).first;
   }
 }
