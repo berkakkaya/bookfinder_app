@@ -1,6 +1,7 @@
 import "package:bookfinder_app/extensions/lists.dart";
 import "package:bookfinder_app/interfaces/api/api_library_subservice.dart";
 import "package:bookfinder_app/models/api_response.dart";
+import "package:bookfinder_app/models/feed_models.dart";
 import "package:bookfinder_app/models/library_models.dart";
 import "package:bookfinder_app/services/api/mock_imp/mock_api_db.dart";
 import "package:bookfinder_app/services/logging/logging_service_provider.dart";
@@ -55,6 +56,19 @@ class MockApiLibrarySubservice implements ApiLibrarySubservice {
     );
 
     _db.mockBookListItems.add(newBookList);
+
+    // If newly created list is public, create feed record
+    if (isPrivate == false) {
+      final user = _db.mockUsers.firstWhere((user) => user.userId == authorId);
+
+      _db.mockFeedEntries.add(BookListPublishFeedEntry(
+        issuerUserId: authorId,
+        issuerNameSurname: user.nameSurname,
+        issuedAt: DateTime.now(),
+        bookListId: newBookListId.toString(),
+        bookListName: title,
+      ));
+    }
 
     return Future.value(ApiResponse(status: ResponseStatus.created));
   }
@@ -182,6 +196,19 @@ class MockApiLibrarySubservice implements ApiLibrarySubservice {
 
     item.title = title;
     item.isPrivate = isPrivate;
+
+    // If the list made public, create feed record
+    if (isPrivate == false) {
+      final user = _db.mockUsers.firstWhere((user) => user.userId == authorId);
+
+      _db.mockFeedEntries.add(BookListPublishFeedEntry(
+        issuerUserId: authorId,
+        issuerNameSurname: user.nameSurname,
+        issuedAt: DateTime.now(),
+        bookListId: bookListId,
+        bookListName: title,
+      ));
+    }
 
     return Future.value(ApiResponse(status: ResponseStatus.ok));
   }
