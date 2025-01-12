@@ -1,6 +1,7 @@
 import "package:bookfinder_app/extensions/lists.dart";
 import "package:bookfinder_app/interfaces/api/api_recommendations_subservice.dart";
 import "package:bookfinder_app/models/api_response.dart";
+import "package:bookfinder_app/models/book_category_type.dart";
 import "package:bookfinder_app/models/bookdata_models.dart";
 import "package:bookfinder_app/services/api/mock_imp/mock_api_db.dart";
 
@@ -11,8 +12,11 @@ class MockApiRecommendationsSubservice extends ApiRecommendationsSubservice {
 
   @override
   Future<ApiResponse<List<BookRecommendation>>> getRecommendations({
+    BookCategory? categoryFilter,
     required String authHeader,
   }) {
+    // NOTE: Ignoring the category filter for now
+
     return Future.value(ApiResponse(
       status: ResponseStatus.ok,
       data: _db.mockBookDatas

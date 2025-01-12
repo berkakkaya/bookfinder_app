@@ -1,5 +1,6 @@
 import "package:bookfinder_app/interfaces/api/api_recommendations_subservice.dart";
 import "package:bookfinder_app/models/api_response.dart";
+import "package:bookfinder_app/models/book_category_type.dart";
 import "package:bookfinder_app/models/bookdata_models.dart";
 import "package:bookfinder_app/utils/convert_utils.dart";
 import "package:dio/dio.dart";
@@ -11,8 +12,11 @@ class DioApiRecommendationsSubservice implements ApiRecommendationsSubservice {
 
   @override
   Future<ApiResponse<List<BookRecommendation>>> getRecommendations({
+    BookCategory? categoryFilter,
     required String authHeader,
   }) async {
+    // TODO: Add category filter support
+
     try {
       final response = await _dio.get(
         "/recommendations",
