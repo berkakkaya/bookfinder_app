@@ -16,7 +16,7 @@ class MockApiUsersSubservice implements ApiUsersSubservice {
   }) {
     // Auth header is in the format: "Bearer access <token>"
     // In mock implementation, the <token> is the userId
-    userId ??= authHeader.split(" ")[2];
+    userId ??= authHeader.split(" ").last;
 
     final foundUser = _db.mockUsers.firstWhereOrNull(
       (u) => u.userId == userId,
@@ -31,6 +31,58 @@ class MockApiUsersSubservice implements ApiUsersSubservice {
     return Future.value(ApiResponse(
       status: ResponseStatus.ok,
       data: foundUser,
+    ));
+  }
+
+  @override
+  Future<ApiResponse<void>> followUser(
+    String userId, {
+    required String authHeader,
+  }) {
+    final requesterUserId = authHeader.split(" ").last;
+    final requesterUser = _db.mockUsers.firstWhere(
+      (u) => u.userId == requesterUserId,
+    );
+
+    final targetUser = _db.mockUsers.firstWhereOrNull(
+      (u) => u.userId == userId,
+    );
+
+    if (targetUser == null) {
+      return Future.value(ApiResponse(
+        status: ResponseStatus.notFound,
+      ));
+    }
+
+    requesterUser.followedUsers.add(userId);
+    return Future.value(ApiResponse(
+      status: ResponseStatus.ok,
+    ));
+  }
+
+  @override
+  Future<ApiResponse<void>> unfollowUser(
+    String userId, {
+    required String authHeader,
+  }) {
+    final requesterUserId = authHeader.split(" ").last;
+    final requesterUser = _db.mockUsers.firstWhere(
+      (u) => u.userId == requesterUserId,
+    );
+
+    final targetUser = _db.mockUsers.firstWhereOrNull(
+      (u) => u.userId == userId,
+    );
+
+    if (targetUser == null) {
+      return Future.value(ApiResponse(
+        status: ResponseStatus.notFound,
+      ));
+    }
+
+    requesterUser.followedUsers.remove(userId);
+    return Future.value(ApiResponse(
+      status: ResponseStatus.ok,
     ));
   }
 }

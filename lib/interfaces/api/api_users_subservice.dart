@@ -6,4 +6,14 @@ abstract class ApiUsersSubservice {
     String? userId, {
     required String authHeader,
   });
+
+  Future<ApiResponse<void>> followUser(
+    String userId, {
+    required String authHeader,
+  });
+
+  Future<ApiResponse<void>> unfollowUser(
+    String userId, {
+    required String authHeader,
+  });
 }

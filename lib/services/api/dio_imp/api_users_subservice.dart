@@ -14,4 +14,22 @@ class DioApiUsersSubservice implements ApiUsersSubservice {
     // TODO: implement getUser
     throw UnimplementedError();
   }
+
+  @override
+  Future<ApiResponse<void>> followUser(
+    String userId, {
+    required String authHeader,
+  }) {
+    // TODO: implement followUser
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ApiResponse<void>> unfollowUser(
+    String userId, {
+    required String authHeader,
+  }) {
+    // TODO: implement unfollowUser
+    throw UnimplementedError();
+  }
 }
