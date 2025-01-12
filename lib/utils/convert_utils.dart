@@ -25,3 +25,9 @@ String convertIndustryIdentifierToString(IdentifierType type) {
     IdentifierType.other => "Other",
   };
 }
+
+/// Generates a seed for given [input] string. This seed can be used for random
+/// operations and it will always return the same value for the same input.
+int generateSeedFromString(String input) {
+  return input.codeUnits.fold(0, (prev, element) => prev + element);
+}
