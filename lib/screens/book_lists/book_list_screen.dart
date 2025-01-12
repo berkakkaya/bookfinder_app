@@ -15,11 +15,15 @@ import "package:bookfinder_app/widgets/letter_container.dart";
 import "package:flutter/material.dart";
 
 class BookListScreen extends StatefulWidget {
-  final BookListItem preitem;
+  final String bookListId;
+  final String? cachedListName;
+  final bool? cacheIsFavoritesList;
 
   const BookListScreen({
     super.key,
-    required this.preitem,
+    required this.bookListId,
+    this.cachedListName,
+    this.cacheIsFavoritesList,
   });
 
   @override
@@ -34,13 +38,14 @@ class _BookListScreenState extends State<BookListScreen> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        setState(() {
-          _bookListFetchFuture = getBooksInsideList();
-          _userFetchFuture = getUser();
-        });
-      }
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+
+      setState(() {
+        _bookListFetchFuture = getBooksInsideList(
+          bookListId: widget.bookListId,
+        );
+      });
     });
   }
 
@@ -51,19 +56,15 @@ class _BookListScreenState extends State<BookListScreen> {
         future: _bookListFetchFuture,
         builder: (context, snapshot) {
           final BookListItemWithBooks? bookList = snapshot.data;
-          final int bookCount = bookList?.bookCount ?? widget.preitem.bookCount;
-          final bool isPrivate =
-              bookList?.isPrivate ?? widget.preitem.isPrivate;
 
           return SafeArea(
             child: CustomScrollView(
               slivers: [
                 SliverToBoxAdapter(
                   child: _getPageHeader(
-                    bookList,
-                    context,
-                    bookCount,
-                    isPrivate,
+                    bookList: bookList,
+                    cachedListName: widget.cachedListName,
+                    cacheIsFavoritesList: widget.cacheIsFavoritesList,
                   ),
                 ),
                 if (snapshot.connectionState == ConnectionState.waiting)
@@ -78,7 +79,7 @@ class _BookListScreenState extends State<BookListScreen> {
                       child: Text("Kitap listesi alınamadı."),
                     ),
                   )
-                else if (bookCount == 0)
+                else if (bookList.bookCount == 0)
                   SliverFillRemaining(
                     child: _getEmptyListIndicator(context),
                   )
@@ -103,7 +104,8 @@ class _BookListScreenState extends State<BookListScreen> {
                         trailing: IconButton(
                           icon: Icon(Icons.delete_outline_rounded),
                           onPressed: () => removeBookFromList(
-                            bookList.books[index],
+                            bookListId: widget.bookListId,
+                            bookItem: bookList.books[index],
                           ),
                         ),
                       ),
@@ -154,12 +156,16 @@ class _BookListScreenState extends State<BookListScreen> {
     );
   }
 
-  Padding _getPageHeader(
+  Padding _getPageHeader({
     BookListItemWithBooks? bookList,
-    BuildContext context,
-    int bookCount,
-    bool isPrivate,
-  ) {
+    String? cachedListName,
+    bool? cacheIsFavoritesList,
+  }) {
+    final String? listName = bookList?.title ?? cachedListName;
+    final bool isFavoritesList = bookList != null
+        ? bookList.internalTitle == "_likedBooks"
+        : cacheIsFavoritesList ?? false;
+
     return Padding(
       padding: EdgeInsets.only(
         top: 64,
@@ -172,29 +178,32 @@ class _BookListScreenState extends State<BookListScreen> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          LetterContainer(
-            text: bookList?.title ?? widget.preitem.title,
-            size: 160,
-            colorOverride:
-                widget.preitem.internalTitle == "_likedBooks" ? colorRed : null,
-            contentOverride: widget.preitem.internalTitle == "_likedBooks"
-                ? const Icon(
-                    Icons.favorite_rounded,
-                    color: colorWhite,
-                    size: 64,
-                  )
-                : null,
-          ),
-          SizedBox(height: 32),
-          Text(
-            bookList?.title ?? widget.preitem.title,
-            style: Theme.of(context)
-                .textTheme
-                .headlineMedium
-                ?.copyWith(fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 16),
+          if (listName != null) ...[
+            LetterContainer(
+              text: listName,
+              size: 160,
+              colorOverride: isFavoritesList ? colorRed : null,
+              contentOverride: isFavoritesList
+                  ? const Icon(
+                      Icons.favorite_rounded,
+                      color: colorWhite,
+                      size: 64,
+                    )
+                  : null,
+            ),
+            SizedBox(height: 32),
+          ],
+          if (listName != null) ...[
+            Text(
+              listName,
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineMedium
+                  ?.copyWith(fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 16),
+          ],
           FutureBuilder(
             future: _userFetchFuture,
             builder: (context, snapshot) {
@@ -216,56 +225,60 @@ class _BookListScreenState extends State<BookListScreen> {
               );
             },
           ),
-          SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                "$bookCount kitap",
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge
-                    ?.copyWith(color: colorGray),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                "⦁",
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge
-                    ?.copyWith(color: colorGray),
-              ),
-              const SizedBox(width: 8),
-              Icon(
-                isPrivate ? Icons.lock_outline_rounded : Icons.public_rounded,
-                color: colorGray,
-                size: 16,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                isPrivate ? "Gizli" : "Herkese Açık",
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge
-                    ?.copyWith(color: colorGray),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
+          if (bookList != null) ...[
+            SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "${bookList.bookCount} kitap",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge
+                      ?.copyWith(color: colorGray),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  "⦁",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge
+                      ?.copyWith(color: colorGray),
+                ),
+                const SizedBox(width: 8),
+                Icon(
+                  bookList.isPrivate
+                      ? Icons.lock_outline_rounded
+                      : Icons.public_rounded,
+                  color: colorGray,
+                  size: 16,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  bookList.isPrivate ? "Gizli" : "Herkese Açık",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge
+                      ?.copyWith(color: colorGray),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ],
         ],
       ),
     );
   }
 
-  Future<BookListItemWithBooks?> getBooksInsideList() async {
+  Future<BookListItemWithBooks?> getBooksInsideList({
+    required String bookListId,
+  }) async {
     final response = await withAuth((authHeader) {
       return ApiServiceProvider.i.library.getBookList(
-        widget.preitem.internalTitle == "_likedBooks"
-            ? "_likedBooks"
-            : widget.preitem.bookListId,
+        bookListId,
         authHeader: authHeader,
       );
     });
@@ -290,22 +303,28 @@ class _BookListScreenState extends State<BookListScreen> {
       "Response data can't be null when status is ok.",
     );
 
+    setState(() {
+      _userFetchFuture = getUser(
+        authorId: response.data!.authorId,
+      );
+    });
+
     return response.data!;
   }
 
-  Future<User?> getUser() async {
+  Future<User?> getUser({
+    required String? authorId,
+  }) async {
     final response = await withAuth((authHeader) {
       return ApiServiceProvider.i.users.getUser(
-        widget.preitem.internalTitle == "_likedBooks"
-            ? null
-            : widget.preitem.authorId,
+        authorId,
         authHeader: authHeader,
       );
     });
 
     if (response.status != ResponseStatus.ok) {
       LoggingServiceProvider.i.error(
-        "Failed to get user with ID ${widget.preitem.authorId}. (${response.status})",
+        "Failed to get user with ID $authorId. (${response.status})",
       );
 
       if (mounted) {
@@ -334,7 +353,10 @@ class _BookListScreenState extends State<BookListScreen> {
     ));
   }
 
-  Future<void> removeBookFromList(BookListBookItem bookItem) async {
+  Future<void> removeBookFromList({
+    required String bookListId,
+    required BookListBookItem bookItem,
+  }) async {
     final bool? userConfirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -364,9 +386,7 @@ class _BookListScreenState extends State<BookListScreen> {
 
     final response = await withAuth((authHeader) {
       return ApiServiceProvider.i.library.removeBookFromList(
-        widget.preitem.internalTitle == "_likedBooks"
-            ? "_likedBooks"
-            : widget.preitem.bookListId,
+        bookListId,
         bookId: bookItem.bookId,
         authHeader: authHeader,
       );
@@ -392,7 +412,7 @@ class _BookListScreenState extends State<BookListScreen> {
 
     if (response.status == ResponseStatus.notFound) {
       LoggingServiceProvider.i.warning(
-        "Book not found in list with ID ${widget.preitem.bookListId}. Book ID: ${bookItem.bookId}",
+        "Book not found in list with ID $bookListId. Book ID: ${bookItem.bookId}",
       );
     }
 
@@ -403,7 +423,9 @@ class _BookListScreenState extends State<BookListScreen> {
       );
 
       setState(() {
-        _bookListFetchFuture = getBooksInsideList();
+        _bookListFetchFuture = getBooksInsideList(
+          bookListId: bookListId,
+        );
       });
     }
   }

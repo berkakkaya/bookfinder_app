@@ -85,7 +85,12 @@ class _LibraryTabState extends State<LibraryTab> {
             const SizedBox(height: 36),
             for (final bookListItem in bookListItems!) ...[
               BookListCard(
-                listItem: bookListItem,
+                listTitle: bookListItem.title,
+                internalTitle: bookListItem.internalTitle,
+                details: (
+                  bookCount: bookListItem.bookCount,
+                  isPrivate: bookListItem.isPrivate,
+                ),
                 onTap: () => goToBookListScreen(bookListItem),
               ),
               const SizedBox(height: 16),
@@ -192,6 +197,10 @@ class _LibraryTabState extends State<LibraryTab> {
   }
 
   void goToBookListScreen(BookListItem bookListItem) {
-    context.navigateTo(BookListScreen(preitem: bookListItem));
+    context.navigateTo(BookListScreen(
+      bookListId: bookListItem.bookListId,
+      cacheIsFavoritesList: bookListItem.internalTitle == "_likedBooks",
+      cachedListName: bookListItem.title,
+    ));
   }
 }
