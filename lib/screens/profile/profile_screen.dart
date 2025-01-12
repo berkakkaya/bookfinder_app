@@ -4,10 +4,13 @@ import "package:bookfinder_app/extensions/snackbars.dart";
 import "package:bookfinder_app/extensions/strings.dart";
 import "package:bookfinder_app/extensions/theming.dart";
 import "package:bookfinder_app/models/api_response.dart";
+import "package:bookfinder_app/models/library_models.dart";
 import "package:bookfinder_app/models/user_models.dart";
+import "package:bookfinder_app/screens/book_lists/book_list_screen.dart";
 import "package:bookfinder_app/services/api/api_service_provider.dart";
 import "package:bookfinder_app/services/logging/logging_service_provider.dart";
 import "package:bookfinder_app/utils/auth_utils.dart";
+import "package:bookfinder_app/widgets/cards/book_list_card.dart";
 import "package:bookfinder_app/widgets/custom_bottom_navbar.dart";
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
@@ -27,7 +30,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  Future<User?>? _userFuture;
+  Future<({User user, List<BookListItem> bookLists})?>? _dataFuture;
 
   @override
   void initState() {
@@ -35,7 +38,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (!mounted) return;
 
       setState(() {
-        _userFuture = _getUser();
+        _dataFuture = _getData();
       });
     });
 
@@ -47,19 +50,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       body: SafeArea(
         child: FutureBuilder(
-          future: _userFuture,
+          future: _dataFuture,
           builder: (context, snapshot) {
             final bool isLoading =
                 snapshot.connectionState == ConnectionState.waiting;
-            final User? user = snapshot.data;
+            final data = snapshot.data;
 
             return RefreshIndicator(
               onRefresh: () async {
                 setState(() {
-                  _userFuture = _getUser();
+                  _dataFuture = _getData();
                 });
 
-                await _userFuture;
+                await _dataFuture;
               },
               child: CustomScrollView(
                 slivers: [
@@ -85,7 +88,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: CircularProgressIndicator(),
                       ),
                     )
-                  else if (user == null)
+                  else if (data == null)
                     const SliverFillRemaining(
                       child: Center(
                         child: Text("Kullanıcı bilgileri alınamadı"),
@@ -104,7 +107,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           backgroundColor: colorGray,
                           // Put first two letters of the name and surname
                           child: Text(
-                            user.nameSurname.leadingLetters.take(2).join(),
+                            data.user.nameSurname.leadingLetters.take(2).join(),
                             style: Theme.of(context)
                                 .textTheme
                                 .displayLarge
@@ -117,9 +120,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     SliverToBoxAdapter(
                       child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 32,
+                        padding: EdgeInsets.only(
+                          top: 32,
+                          left: 16,
+                          right: 16,
+                          bottom: 48,
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -127,20 +132,59 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              user.nameSurname,
+                              data.user.nameSurname,
                               style: Theme.of(context).textTheme.headlineLarge,
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              user.followedUsers.isEmpty
+                              data.user.followedUsers.isEmpty
                                   ? "Takip edilen yok"
-                                  : "${user.followedUsers.length} takip edilen kişi",
+                                  : "${data.user.followedUsers.length} takip edilen kişi",
                               style: Theme.of(context).textTheme.bodyMedium,
                               textAlign: TextAlign.center,
                             ),
                           ],
                         ),
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 16,
+                        ),
+                        child: Text(
+                          widget.userId == null
+                              ? "Kitap Listelerim"
+                              : "Kitap Listeleri",
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                      ),
+                    ),
+                    SliverPadding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 32,
+                      ),
+                      sliver: SliverList.separated(
+                        separatorBuilder: (context, i) => const SizedBox(
+                          height: 16,
+                        ),
+                        itemCount: data.bookLists.length,
+                        itemBuilder: (context, i) {
+                          final bookList = data.bookLists[i];
+
+                          return BookListCard(
+                            listTitle: bookList.title,
+                            details: (
+                              bookCount: bookList.bookCount,
+                              isPrivate: bookList.isPrivate,
+                            ),
+                            internalTitle: bookList.internalTitle,
+                            onTap: () => _goToBookListScreen(bookList),
+                          );
+                        },
                       ),
                     ),
                   ],
@@ -156,6 +200,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
               key: const ValueKey("profile_screen_bottom_navbar"),
               selectedItem: CustomBottomNavbarItem.profile,
             ),
+    );
+  }
+
+  Future<({User user, List<BookListItem> bookLists})?> _getData() async {
+    final userFuture = _getUser();
+    final bookListsFuture = _getBookLists();
+
+    await Future.wait([userFuture, bookListsFuture]);
+
+    final user = await userFuture;
+    final bookLists = await bookListsFuture;
+
+    if (user == null || bookLists == null) {
+      return null;
+    }
+
+    return (
+      user: user,
+      bookLists: bookLists,
     );
   }
 
@@ -188,6 +251,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
 
     return response.data;
+  }
+
+  Future<List<BookListItem>?> _getBookLists() async {
+    final response = await withAuth((authHeader) {
+      return ApiServiceProvider.i.library.getBookLists(
+        targetUserId: widget.userId,
+        authHeader: authHeader,
+      );
+    });
+
+    if (response.status != ResponseStatus.ok) {
+      LoggingServiceProvider.i.error(
+        "Failed to get book lists of user with ID ${widget.userId} "
+        "(${response.status})",
+      );
+
+      if (mounted) {
+        context.showSnackbar(
+          "Kullanıcının kitap listeleri alınamadı",
+          type: SnackbarType.error,
+        );
+      }
+
+      return null;
+    }
+
+    assert(
+      response.data != null,
+      "Response status is OK but data is null",
+    );
+
+    return response.data;
+  }
+
+  void _goToBookListScreen(BookListItem bookList) {
+    context.navigateTo(
+      BookListScreen(
+        bookListId: bookList.bookListId,
+        cacheIsFavoritesList: bookList.internalTitle == "_likedBooks",
+        cachedListName: bookList.title,
+      ),
+    );
   }
 
   Future<void> logoutPressed() async {
