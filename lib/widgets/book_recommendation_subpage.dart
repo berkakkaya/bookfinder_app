@@ -71,7 +71,7 @@ class _BookRecommendationSubpageState extends State<BookRecommendationSubpage>
             children: [
               Spacer(),
               Expanded(
-                flex: 10,
+                flex: 13,
                 child: GestureDetector(
                   onTap: () => goToBookDetailsScreen(
                     bookId: recommendation.bookId,

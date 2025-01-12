@@ -1,4 +1,5 @@
 import "package:bookfinder_app/models/api_response.dart";
+import "package:bookfinder_app/models/book_category_type.dart";
 import "package:bookfinder_app/models/bookdata_models.dart";
 import "package:bookfinder_app/services/api/api_service_provider.dart";
 import "package:bookfinder_app/services/logging/logging_service_provider.dart";
@@ -9,10 +10,14 @@ class ExploreRecommendationController {
     _recommendationFetchFuture = _fetchNewRecommendations();
   }
 
+  BookCategory? _selectedCategory;
+
   final List<BookRecommendation> _recommendations = [];
 
   bool _fetchOngoing = false;
   late Future<bool> _recommendationFetchFuture;
+
+  BookCategory? get selectedCategory => _selectedCategory;
 
   Future<bool> _fetchNewRecommendations() async {
     if (_fetchOngoing) {
@@ -24,6 +29,7 @@ class ExploreRecommendationController {
     try {
       final result = await withAuth(
         (authHeader) => ApiServiceProvider.i.recommendations.getRecommendations(
+          categoryFilter: _selectedCategory,
           authHeader: authHeader,
         ),
       );
@@ -48,7 +54,10 @@ class ExploreRecommendationController {
     }
   }
 
-  Future<bool> forceFetchNewRecommendations() async {
+  Future<bool> forceFetchNewRecommendations([BookCategory? newFilter]) async {
+    _selectedCategory = newFilter;
+    _recommendations.clear();
+
     _recommendationFetchFuture = _fetchNewRecommendations();
     return _recommendationFetchFuture;
   }
