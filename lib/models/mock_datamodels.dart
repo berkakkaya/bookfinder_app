@@ -9,6 +9,7 @@ class MockUser extends User {
     required super.nameSurname,
     required super.email,
     required this.password,
+    required super.followedUsers,
   });
 }
 

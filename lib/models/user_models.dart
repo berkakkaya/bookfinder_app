@@ -2,11 +2,13 @@ class User {
   final String userId;
   final String nameSurname;
   final String email;
+  final List<String> followedUsers;
 
   const User({
     required this.userId,
     required this.nameSurname,
     required this.email,
+    required this.followedUsers,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -14,6 +16,7 @@ class User {
       userId: json["userId"],
       nameSurname: json["nameSurname"],
       email: json["email"],
+      followedUsers: List<String>.from(json["followedUsers"]),
     );
   }
 

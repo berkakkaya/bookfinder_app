@@ -69,6 +69,7 @@ class MockApiAuthSubservice implements ApiAuthSubservice {
       nameSurname: nameSurname,
       email: email,
       password: password,
+      followedUsers: [],
     );
 
     _db.mockUsers.add(newUser);
