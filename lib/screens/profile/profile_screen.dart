@@ -45,96 +45,117 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder(
-        future: _userFuture,
-        builder: (context, snapshot) {
-          final bool isLoading =
-              snapshot.connectionState == ConnectionState.waiting;
-          final User? user = snapshot.data;
+      body: SafeArea(
+        child: FutureBuilder(
+          future: _userFuture,
+          builder: (context, snapshot) {
+            final bool isLoading =
+                snapshot.connectionState == ConnectionState.waiting;
+            final User? user = snapshot.data;
 
-          return RefreshIndicator(
-            onRefresh: () async {
-              setState(() {
-                _userFuture = _getUser();
-              });
+            return RefreshIndicator(
+              onRefresh: () async {
+                setState(() {
+                  _userFuture = _getUser();
+                });
 
-              await _userFuture;
-            },
-            child: CustomScrollView(
-              slivers: [
-                if (widget.asTab)
-                  SliverAppBar(
-                    leading: null,
-                    backgroundColor: context.theme.scaffoldBackgroundColor,
-                    actions: [
-                      if (kDebugMode)
+                await _userFuture;
+              },
+              child: CustomScrollView(
+                slivers: [
+                  if (widget.asTab)
+                    SliverAppBar(
+                      leading: null,
+                      backgroundColor: context.theme.scaffoldBackgroundColor,
+                      actions: [
+                        if (kDebugMode)
+                          IconButton(
+                            onPressed: _showDeveloperDialog,
+                            icon: const Icon(Icons.developer_mode_rounded),
+                          ),
                         IconButton(
-                          onPressed: _showDeveloperDialog,
-                          icon: const Icon(Icons.developer_mode_rounded),
+                          onPressed: logoutPressed,
+                          icon: const Icon(Icons.logout_rounded),
                         ),
-                      IconButton(
-                        onPressed: logoutPressed,
-                        icon: const Icon(Icons.logout_rounded),
-                      ),
-                    ],
-                  ),
-                if (isLoading)
-                  const SliverFillRemaining(
-                    child: Center(
-                      child: CircularProgressIndicator(),
+                      ],
                     ),
-                  )
-                else if (user == null)
-                  const SliverFillRemaining(
-                    child: Center(
-                      child: Text("Kullanıcı bilgileri alınamadı"),
-                    ),
-                  )
-                else ...[
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 32,
+                  if (isLoading)
+                    const SliverFillRemaining(
+                      child: Center(
+                        child: CircularProgressIndicator(),
                       ),
-                      child: CircleAvatar(
-                        radius: 96,
-                        backgroundColor: colorGray,
-                        // Put first two letters of the name and surname
-                        child: Text(
-                          user.nameSurname.leadingLetters.take(2).join(),
-                          style: Theme.of(context)
-                              .textTheme
-                              .displayLarge
-                              ?.copyWith(
-                                color: colorWhite,
-                              ),
+                    )
+                  else if (user == null)
+                    const SliverFillRemaining(
+                      child: Center(
+                        child: Text("Kullanıcı bilgileri alınamadı"),
+                      ),
+                    )
+                  else ...[
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          top: widget.asTab ? 32 : 64,
+                          left: 16,
+                          right: 16,
+                        ),
+                        child: CircleAvatar(
+                          radius: 96,
+                          backgroundColor: colorGray,
+                          // Put first two letters of the name and surname
+                          child: Text(
+                            user.nameSurname.leadingLetters.take(2).join(),
+                            style: Theme.of(context)
+                                .textTheme
+                                .displayLarge
+                                ?.copyWith(
+                                  color: colorWhite,
+                                ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 32,
-                      ),
-                      child: Text(
-                        user.nameSurname,
-                        style: Theme.of(context).textTheme.headlineLarge,
-                        textAlign: TextAlign.center,
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 32,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              user.nameSurname,
+                              style: Theme.of(context).textTheme.headlineLarge,
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              user.followedUsers.isEmpty
+                                  ? "Takip edilen yok"
+                                  : "${user.followedUsers.length} takip edilen kişi",
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ],
-              ],
-            ),
-          );
-        },
+              ),
+            );
+          },
+        ),
       ),
       bottomNavigationBar: widget.asTab
           ? null
-          : CustomBottomNavbar(selectedItem: CustomBottomNavbarItem.profile),
+          : CustomBottomNavbar(
+              key: const ValueKey("profile_screen_bottom_navbar"),
+              selectedItem: CustomBottomNavbarItem.profile,
+            ),
     );
   }
 
