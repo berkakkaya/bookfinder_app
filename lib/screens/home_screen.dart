@@ -1,7 +1,7 @@
 import "package:bookfinder_app/screens/home_screen_tabs/explore_tab.dart";
 import "package:bookfinder_app/screens/home_screen_tabs/homepage_tab.dart";
 import "package:bookfinder_app/screens/home_screen_tabs/library_tab.dart";
-import "package:bookfinder_app/screens/home_screen_tabs/profile_tab.dart";
+import "package:bookfinder_app/screens/profile/profile_screen.dart";
 import "package:bookfinder_app/widgets/custom_bottom_navbar.dart";
 import "package:bookfinder_app/widgets/tab_container.dart";
 import "package:flutter/material.dart";
@@ -45,7 +45,10 @@ class _HomeScreenState extends State<HomeScreen> {
             TabContainer(
               key: const ValueKey("ProfileTab"),
               selected: selectedItem == CustomBottomNavbarItem.profile,
-              child: const ProfileTab(),
+              child: const ProfileScreen(
+                userId: null,
+                asTab: true,
+              ),
             ),
           ],
         ),
