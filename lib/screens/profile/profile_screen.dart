@@ -30,7 +30,12 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  Future<({User user, List<BookListItem> bookLists})?>? _dataFuture;
+  Future<
+      ({
+        User user,
+        List<BookListItem> bookLists,
+        bool? isFollowing,
+      })?>? _dataFuture;
 
   @override
   void initState() {
@@ -124,7 +129,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           top: 32,
                           left: 16,
                           right: 16,
-                          bottom: 48,
+                          bottom: 16,
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -148,6 +153,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                     ),
+                    if (widget.userId != null && data.isFollowing != null)
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 16,
+                          ),
+                          child: FilledButton.icon(
+                            icon: Icon(
+                              data.isFollowing!
+                                  ? Icons.person_remove_rounded
+                                  : Icons.person_add_rounded,
+                            ),
+                            label: Text(
+                              data.isFollowing! ? "Takip Bırak" : "Takip Et",
+                            ),
+                            onPressed: () => changeFollowStatus(
+                              widget.userId!,
+                              data.isFollowing!,
+                            ),
+                          ),
+                        ),
+                      ),
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -203,14 +231,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Future<({User user, List<BookListItem> bookLists})?> _getData() async {
+  Future<
+      ({
+        User user,
+        List<BookListItem> bookLists,
+        bool? isFollowing,
+      })?> _getData() async {
     final userFuture = _getUser();
     final bookListsFuture = _getBookLists();
+    final Future<bool?> followStatusFuture = widget.userId == null
+        ? Future.value()
+        : _getFollowStatus(widget.userId!);
 
-    await Future.wait([userFuture, bookListsFuture]);
+    await Future.wait([userFuture, bookListsFuture, followStatusFuture]);
 
     final user = await userFuture;
     final bookLists = await bookListsFuture;
+    final isFollowing = await followStatusFuture;
 
     if (user == null || bookLists == null) {
       return null;
@@ -219,6 +256,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return (
       user: user,
       bookLists: bookLists,
+      isFollowing: isFollowing,
     );
   }
 
@@ -283,6 +321,83 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
 
     return response.data;
+  }
+
+  Future<bool> _getFollowStatus(String userId) async {
+    final response = await withAuth((authHeader) {
+      return ApiServiceProvider.i.users.checkFollowStatus(
+        userId,
+        authHeader: authHeader,
+      );
+    });
+
+    if (response.status != ResponseStatus.ok) {
+      LoggingServiceProvider.i.error(
+        "Failed to get follow status of user with ID $userId "
+        "(${response.status})",
+      );
+
+      if (mounted) {
+        context.showSnackbar(
+          "Takip durumu alınamadı",
+          type: SnackbarType.error,
+        );
+      }
+
+      return false;
+    }
+
+    assert(
+      response.data != null,
+      "Response status is OK but data is null",
+    );
+
+    return response.data!;
+  }
+
+  Future<void> changeFollowStatus(String userId, bool isFollowing) async {
+    final response = await withAuth((authHeader) {
+      if (isFollowing) {
+        return ApiServiceProvider.i.users.unfollowUser(
+          userId,
+          authHeader: authHeader,
+        );
+      } else {
+        return ApiServiceProvider.i.users.followUser(
+          userId,
+          authHeader: authHeader,
+        );
+      }
+    });
+
+    if (response.status != ResponseStatus.ok) {
+      LoggingServiceProvider.i.error(
+        "Failed to ${isFollowing ? "unfollow" : "follow"} user with ID $userId "
+        "(${response.status})",
+      );
+
+      if (mounted) {
+        context.showSnackbar(
+          "Takip durumu değiştirilemedi",
+          type: SnackbarType.error,
+        );
+      }
+
+      return;
+    }
+
+    if (mounted) {
+      context.showSnackbar(
+        isFollowing
+            ? "Kullanıcıyı takip bırakıldı"
+            : "Kullanıcı takip ediliyor",
+        type: SnackbarType.success,
+      );
+
+      setState(() {
+        _dataFuture = _getData();
+      });
+    }
   }
 
   void _goToBookListScreen(BookListItem bookList) {

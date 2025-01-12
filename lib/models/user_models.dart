@@ -2,9 +2,9 @@ class User {
   final String userId;
   final String nameSurname;
   final String email;
-  final Set<String> followedUsers;
+  Set<String> followedUsers;
 
-  const User({
+  User({
     required this.userId,
     required this.nameSurname,
     required this.email,

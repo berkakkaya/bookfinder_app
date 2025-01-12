@@ -1,7 +1,7 @@
 import "package:bookfinder_app/models/bookdata_models.dart";
 import "package:bookfinder_app/models/mock_datamodels.dart";
 
-const List<MockUser> mockUserDatas = [
+final List<MockUser> mockUserDatas = [
   MockUser(
     userId: "1",
     nameSurname: "Ahmet Yılmaz",
