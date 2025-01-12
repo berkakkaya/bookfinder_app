@@ -44,6 +44,7 @@ dependencies:
   talker_dio_logger: ^4.5.6
   cached_network_image: ^3.4.1
   flutter_svg: ^2.0.16
+  intl: ^0.20.1
 
 dev_dependencies:
   flutter_test:
