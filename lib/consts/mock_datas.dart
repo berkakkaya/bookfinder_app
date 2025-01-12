@@ -7,14 +7,14 @@ const List<MockUser> mockUserDatas = [
     nameSurname: "Ahmet Yılmaz",
     email: "ahmet@gmail.com",
     password: "ahmet123",
-    followedUsers: ["2"],
+    followedUsers: {"2"},
   ),
   MockUser(
     userId: "2",
     nameSurname: "Kübra Kaya",
     email: "kubra@gmail.com",
     password: "kubra123",
-    followedUsers: ["1"],
+    followedUsers: {"1"},
   ),
 ];
 

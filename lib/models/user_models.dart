@@ -2,7 +2,7 @@ class User {
   final String userId;
   final String nameSurname;
   final String email;
-  final List<String> followedUsers;
+  final Set<String> followedUsers;
 
   const User({
     required this.userId,
@@ -16,7 +16,7 @@ class User {
       userId: json["userId"],
       nameSurname: json["nameSurname"],
       email: json["email"],
-      followedUsers: List<String>.from(json["followedUsers"]),
+      followedUsers: Set<String>.from(json["followedUsers"]),
     );
   }
 
