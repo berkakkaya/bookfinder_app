@@ -20,7 +20,7 @@ class _HomepageTabState extends State<HomepageTab> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
         children: [
           Text(
-            "İyi günler",
+            "Bookfinder",
             style: context.theme.textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.bold,
             ),
