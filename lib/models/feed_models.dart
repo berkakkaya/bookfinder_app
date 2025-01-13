@@ -13,13 +13,13 @@ class BaseFeedEntry {
     final type = json["type"] as String;
 
     switch (type) {
-      case "book_list_publish":
+      case "bookListPublish'":
         return BookListPublishFeedEntry(
           issuerUserId: json["issuerUserId"],
           issuerNameSurname: json["issuerNameSurname"],
           issuedAt: DateTime.parse(json["issuedAt"]),
-          bookListId: json["bookListId"],
-          bookListName: json["bookListName"],
+          bookListId: json["details"]["bookListId"],
+          bookListName: json["details"]["bookListName"],
         );
       default:
         throw ArgumentError("Unknown feed entry type: $type");
