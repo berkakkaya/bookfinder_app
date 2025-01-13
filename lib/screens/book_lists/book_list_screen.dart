@@ -88,6 +88,7 @@ class _BookListScreenState extends State<BookListScreen> {
                     padding: EdgeInsets.only(
                       left: 16,
                       right: 16,
+                      bottom: 64,
                     ),
                     sliver: SliverList.separated(
                       itemCount: bookList.books.length,
