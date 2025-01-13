@@ -53,6 +53,7 @@ class _ExploreTabState extends State<ExploreTab> {
                 scrollDirection: Axis.vertical,
                 itemBuilder: (context, index) {
                   return BookRecommendationSubpage(
+                    key: ValueKey("explore_subpage:$index"),
                     recommendationFuture:
                         recommendationController.getNextRecommendation(),
                     index: index,
