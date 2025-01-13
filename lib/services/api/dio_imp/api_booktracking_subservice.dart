@@ -1,6 +1,7 @@
 import "package:bookfinder_app/interfaces/api/api_booktracking_subservice.dart";
 import "package:bookfinder_app/models/api_response.dart";
 import "package:bookfinder_app/models/book_tracking_models.dart";
+import "package:bookfinder_app/utils/convert_utils.dart";
 import "package:dio/dio.dart";
 
 class DioApiBooktrackingSubservice implements ApiBooktrackingSubservice {
@@ -12,17 +13,74 @@ class DioApiBooktrackingSubservice implements ApiBooktrackingSubservice {
   Future<ApiResponse<BookTrackingData>> getBookTrackingData(
     String bookId, {
     required String authHeader,
-  }) {
-    // TODO: implement getBookTrackingData
-    throw UnimplementedError();
+  }) async {
+    try {
+      final response = await _dio.get(
+        "/bookTrackDatas",
+        queryParameters: {
+          "bookId": bookId,
+        },
+        options: Options(
+          headers: {
+            "Authorization": authHeader,
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return ApiResponse(
+          status: ResponseStatus.ok,
+          data: BookTrackingData.fromJson(response.data["data"]),
+        );
+      }
+
+      return ApiResponse(status: ResponseStatus.notFound);
+    } on DioException catch (e) {
+      final responseType = parseResponseStatus(e.response?.statusCode);
+
+      if (responseType != null) {
+        return ApiResponse(status: responseType);
+      }
+
+      // Uncovered error occurred, rethrow it
+      rethrow;
+    }
   }
 
   @override
   Future<ApiResponse<BookTrackingDataWithBookDatas>> getBookTrackingDatas({
     required String authHeader,
-  }) {
-    // TODO: implement getBookTrackingDatas
-    throw UnimplementedError();
+  }) async {
+    try {
+      final response = await _dio.get(
+        "/bookTrackDatas",
+        options: Options(
+          headers: {
+            "Authorization": authHeader,
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return ApiResponse(
+          status: ResponseStatus.ok,
+          data: (response.data["data"] as List<dynamic>)
+              .map((json) => BookTrackingDataWithBookData.fromJson(json))
+              .toList(),
+        );
+      }
+
+      return ApiResponse(status: ResponseStatus.notFound);
+    } on DioException catch (e) {
+      final responseType = parseResponseStatus(e.response?.statusCode);
+
+      if (responseType != null) {
+        return ApiResponse(status: responseType);
+      }
+
+      // Uncovered error occurred, rethrow it
+      rethrow;
+    }
   }
 
   @override
@@ -30,8 +88,11 @@ class DioApiBooktrackingSubservice implements ApiBooktrackingSubservice {
     String bookId, {
     required String authHeader,
   }) {
-    // TODO: implement removeBookTrackingData
-    throw UnimplementedError();
+    return _updateBookTrackingData(
+      bookId: bookId,
+      status: null,
+      authHeader: authHeader,
+    );
   }
 
   @override
@@ -40,7 +101,50 @@ class DioApiBooktrackingSubservice implements ApiBooktrackingSubservice {
     required BookTrackingStatus status,
     required String authHeader,
   }) {
-    // TODO: implement updateBookTrackingData
-    throw UnimplementedError();
+    return _updateBookTrackingData(
+      bookId: bookId,
+      status: status,
+      authHeader: authHeader,
+    );
+  }
+
+  Future<ApiResponse<void>> _updateBookTrackingData({
+    required String bookId,
+    required BookTrackingStatus? status,
+    required String authHeader,
+  }) async {
+    final Map<String, dynamic> data = status == null
+        ? {"bookId": bookId}
+        : {
+            "bookId": bookId,
+            "status": status.name,
+          };
+
+    try {
+      final response = await _dio.patch(
+        "/bookTrackDatas",
+        data: data,
+        options: Options(
+          headers: {
+            "Authorization": authHeader,
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return ApiResponse(status: ResponseStatus.ok);
+      }
+
+      return ApiResponse(status: ResponseStatus.unknownError);
+    } on DioException catch (e) {
+      final responseType = parseResponseStatus(e.response?.statusCode);
+
+      if (responseType != null) {
+        return ApiResponse(status: responseType);
+      }
+
+      // Uncovered error occurred, rethrow it
+      rethrow;
+    }
   }
 }

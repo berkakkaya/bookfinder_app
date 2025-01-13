@@ -5,6 +5,21 @@ enum BookTrackingStatus {
   dropped,
 }
 
+BookTrackingStatus convertStrToBookTrackingStatus(String status) {
+  switch (status) {
+    case "willRead":
+      return BookTrackingStatus.willRead;
+    case "reading":
+      return BookTrackingStatus.reading;
+    case "completed":
+      return BookTrackingStatus.completed;
+    case "dropped":
+      return BookTrackingStatus.dropped;
+    default:
+      throw ArgumentError("Invalid status: $status");
+  }
+}
+
 class BookTrackingData {
   final String bookId;
   BookTrackingStatus status;
@@ -13,6 +28,13 @@ class BookTrackingData {
     required this.bookId,
     required this.status,
   });
+
+  static BookTrackingData fromJson(Map<String, dynamic> json) {
+    return BookTrackingData(
+      bookId: json["bookId"],
+      status: convertStrToBookTrackingStatus(json["status"]),
+    );
+  }
 }
 
 class BookTrackingDataWithBookData extends BookTrackingData {
@@ -27,4 +49,14 @@ class BookTrackingDataWithBookData extends BookTrackingData {
     required this.bookAuthors,
     required this.bookThumbnailUrl,
   });
+
+  static BookTrackingDataWithBookData fromJson(Map<String, dynamic> json) {
+    return BookTrackingDataWithBookData(
+      bookId: json["bookId"],
+      status: convertStrToBookTrackingStatus(json["status"]),
+      bookTitle: json["bookTitle"],
+      bookAuthors: List<String>.from(json["bookAuthors"]),
+      bookThumbnailUrl: json["bookThumbnailUrl"],
+    );
+  }
 }
