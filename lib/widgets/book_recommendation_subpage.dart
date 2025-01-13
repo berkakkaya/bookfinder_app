@@ -1,3 +1,5 @@
+import "dart:math";
+
 import "package:bookfinder_app/consts/colors.dart";
 import "package:bookfinder_app/consts/custom_icons.dart";
 import "package:bookfinder_app/extensions/navigation.dart";
@@ -33,6 +35,8 @@ class _BookRecommendationSubpageState extends State<BookRecommendationSubpage>
   bool isLiked = false;
   bool _wantKeepAlive = true;
 
+  final Random random = Random();
+
   @override
   bool get wantKeepAlive => _wantKeepAlive;
 
@@ -61,7 +65,10 @@ class _BookRecommendationSubpageState extends State<BookRecommendationSubpage>
         }
 
         final recommendation = snapshot.data!;
-        final heroTag = "bookCover:${recommendation.bookId}:${widget.index}";
+
+        // We add a random number to the hero tag to prevent hero tag conflicts
+        final heroTag =
+            "bookCover:${recommendation.bookId}:${widget.index}:${random.nextInt(100000)}";
 
         return Padding(
           padding: EdgeInsets.all(32),
