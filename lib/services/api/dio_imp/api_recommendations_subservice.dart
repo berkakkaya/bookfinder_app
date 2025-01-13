@@ -15,11 +15,12 @@ class DioApiRecommendationsSubservice implements ApiRecommendationsSubservice {
     BookCategory? categoryFilter,
     required String authHeader,
   }) async {
-    // TODO: Add category filter support
-
     try {
       final response = await _dio.get(
         "/recommendations",
+        queryParameters: {
+          if (categoryFilter != null) "category": categoryFilter.name,
+        },
         options: Options(headers: {"Authorization": authHeader}),
       );
 
