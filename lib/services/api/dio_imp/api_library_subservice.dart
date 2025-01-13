@@ -176,7 +176,7 @@ class DioApiLibrarySubservice implements ApiLibrarySubservice {
       );
 
       if (response.statusCode == 200) {
-        final bookLists = (response.data as List)
+        final bookLists = (response.data["libraries"] as List)
             .map((entry) => BookListItem.fromJson(entry))
             .toList();
 
