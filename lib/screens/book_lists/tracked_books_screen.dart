@@ -60,89 +60,99 @@ class _TrackedBooksScreenState extends State<TrackedBooksScreen> {
           final List<BookTrackingDataWithBookData> trackedBooks =
               getFilteredTrackedBooks(snapshot.data!).toList();
 
-          return CustomScrollView(
-            slivers: [
-              SliverFloatingHeader(
-                child: Container(
-                  padding: EdgeInsets.only(
-                    top: 64 + MediaQuery.viewInsetsOf(context).top,
-                    left: 16,
-                    right: 16,
-                    bottom: 32,
-                  ),
-                  color: context.theme.scaffoldBackgroundColor,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        "Takip Altındaki Kitaplar",
-                        style: context.theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
+          return RefreshIndicator(
+            onRefresh: () async {
+              setState(() {
+                _trackedBooksFuture = getTrackedBooks();
+              });
+
+              await _trackedBooksFuture;
+            },
+            child: CustomScrollView(
+              slivers: [
+                SliverFloatingHeader(
+                  child: Container(
+                    padding: EdgeInsets.only(
+                      top: 64 + MediaQuery.viewInsetsOf(context).top,
+                      left: 16,
+                      right: 16,
+                      bottom: 32,
+                    ),
+                    color: context.theme.scaffoldBackgroundColor,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          "Takip Altındaki Kitaplar",
+                          style: context.theme.textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 32),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: getStatusChips(),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              if (trackedBooks.isEmpty)
-                SliverFillRemaining(
-                  child: Padding(
-                    padding: const EdgeInsets.all(32),
-                    child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Spacer(),
-                          Expanded(
-                            flex: 5,
-                            child: SvgPicture.asset(
-                              "assets/illustrations/snow.svg",
-                            ),
-                          ),
-                          SizedBox(height: 32),
-                          Text(
-                            statusFilters.isEmpty
-                                ? "Henüz bir kitap takip etmiyorsunuz."
-                                : "Belirtilen filtrelere eşleşen kitap bulunamadı.",
-                            style: context.theme.textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            statusFilters.isEmpty
-                                ? "Bir kitap takip etmeyi deneyin ve buraya yeniden uğrayın."
-                                : 'Tüm kitapları görmek için "Tümü" seçeneğini seçebilirsiniz.',
-                            textAlign: TextAlign.center,
-                          ),
-                          Spacer(),
-                        ],
-                      ),
+                        const SizedBox(height: 32),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: getStatusChips(),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              if (trackedBooks.isNotEmpty)
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  sliver: SliverList.separated(
-                    itemBuilder: (context, i) =>
-                        getTrackedBookCard(trackedBooks[i]),
-                    itemCount: trackedBooks.length,
-                    separatorBuilder: (context, i) => SizedBox(height: 16),
+                if (trackedBooks.isEmpty)
+                  SliverFillRemaining(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32),
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Spacer(),
+                            Expanded(
+                              flex: 5,
+                              child: SvgPicture.asset(
+                                "assets/illustrations/snow.svg",
+                              ),
+                            ),
+                            SizedBox(height: 32),
+                            Text(
+                              statusFilters.isEmpty
+                                  ? "Henüz bir kitap takip etmiyorsunuz."
+                                  : "Belirtilen filtrelere eşleşen kitap bulunamadı.",
+                              style:
+                                  context.theme.textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(height: 16),
+                            Text(
+                              statusFilters.isEmpty
+                                  ? "Bir kitap takip etmeyi deneyin ve buraya yeniden uğrayın."
+                                  : 'Tüm kitapları görmek için "Tümü" seçeneğini seçebilirsiniz.',
+                              textAlign: TextAlign.center,
+                            ),
+                            Spacer(),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-            ],
+                if (trackedBooks.isNotEmpty)
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    sliver: SliverList.separated(
+                      itemBuilder: (context, i) =>
+                          getTrackedBookCard(trackedBooks[i]),
+                      itemCount: trackedBooks.length,
+                      separatorBuilder: (context, i) => SizedBox(height: 16),
+                    ),
+                  ),
+              ],
+            ),
           );
         },
       ),
