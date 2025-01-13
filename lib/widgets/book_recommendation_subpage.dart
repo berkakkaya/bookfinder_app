@@ -72,30 +72,33 @@ class _BookRecommendationSubpageState extends State<BookRecommendationSubpage>
               Spacer(),
               Expanded(
                 flex: 13,
-                child: GestureDetector(
-                  onTap: () => goToBookDetailsScreen(
-                    bookId: recommendation.bookId,
-                    thumbnailUrl: recommendation.thumbnailUrl,
-                    heroTag: heroTag,
-                  ),
-                  child: CachedNetworkImage(
-                    imageUrl: recommendation.thumbnailUrl,
-                    progressIndicatorBuilder: (context, url, progress) {
-                      return Center(
-                        child: CircularProgressIndicator(
-                          value: progress.progress,
-                        ),
-                      );
-                    },
-                    errorWidget: _getCoverImageLoadError,
-                    imageBuilder: (_, imageProvider) => CoverImage(
-                      imageProvider: imageProvider,
-                      addBlurredShadow: true,
+                child: AspectRatio(
+                  aspectRatio: 3 / 4,
+                  child: GestureDetector(
+                    onTap: () => goToBookDetailsScreen(
+                      bookId: recommendation.bookId,
+                      thumbnailUrl: recommendation.thumbnailUrl,
                       heroTag: heroTag,
                     ),
-                    fadeInDuration: Duration(milliseconds: 200),
-                    fadeOutDuration: Duration(milliseconds: 200),
-                    placeholderFadeInDuration: Duration(milliseconds: 200),
+                    child: CachedNetworkImage(
+                      imageUrl: recommendation.thumbnailUrl,
+                      progressIndicatorBuilder: (context, url, progress) {
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: progress.progress,
+                          ),
+                        );
+                      },
+                      errorWidget: _getCoverImageLoadError,
+                      imageBuilder: (_, imageProvider) => CoverImage(
+                        imageProvider: imageProvider,
+                        addBlurredShadow: true,
+                        heroTag: heroTag,
+                      ),
+                      fadeInDuration: Duration(milliseconds: 200),
+                      fadeOutDuration: Duration(milliseconds: 200),
+                      placeholderFadeInDuration: Duration(milliseconds: 200),
+                    ),
                   ),
                 ),
               ),
