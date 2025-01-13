@@ -74,7 +74,8 @@ class DioApiUsersSubservice implements ApiUsersSubservice {
   }) async {
     try {
       final response = await _dio.delete(
-        "/followingUsers/$userId",
+        "/followingUsers",
+        data: {"userId": userId},
         options: Options(headers: {"Authorization": authHeader}),
       );
 
