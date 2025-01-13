@@ -18,6 +18,16 @@ class BookListItem {
     }
   }
 
+  factory BookListItem.fromJson(Map<String, dynamic> json) {
+    return BookListItem(
+      bookListId: json["bookListId"],
+      authorId: json["authorId"],
+      title: json["title"],
+      bookCount: json["bookCount"],
+      isPrivate: json["isPrivate"],
+    );
+  }
+
   String get title => _title == "_likedBooks" ? "Beğenilen Kitaplar" : _title;
   String get internalTitle => _title;
 
@@ -48,6 +58,15 @@ class BookListBookItem {
     required this.authors,
     required this.thumbnailUrl,
   });
+
+  factory BookListBookItem.fromJson(Map<String, dynamic> json) {
+    return BookListBookItem(
+      bookId: json["bookId"],
+      title: json["title"],
+      authors: List<String>.from(json["authors"]),
+      thumbnailUrl: json["thumbnailUrl"],
+    );
+  }
 }
 
 class BookListItemWithBooks extends BookListItem {
@@ -61,4 +80,17 @@ class BookListItemWithBooks extends BookListItem {
     required super.isPrivate,
     required this.books,
   });
+
+  factory BookListItemWithBooks.fromJson(Map<String, dynamic> json) {
+    return BookListItemWithBooks(
+      bookListId: json["bookListId"],
+      authorId: json["authorId"],
+      title: json["title"],
+      bookCount: json["bookCount"],
+      isPrivate: json["isPrivate"],
+      books: (json["books"] as List)
+          .map((entry) => BookListBookItem.fromJson(entry))
+          .toList(),
+    );
+  }
 }
