@@ -13,7 +13,7 @@ class BaseFeedEntry {
     final type = json["type"] as String;
 
     switch (type) {
-      case "bookListPublish'":
+      case "bookListPublish":
         return BookListPublishFeedEntry(
           issuerUserId: json["issuerUserId"],
           issuerNameSurname: json["issuerNameSurname"],
