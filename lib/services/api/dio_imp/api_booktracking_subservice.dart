@@ -64,7 +64,7 @@ class DioApiBooktrackingSubservice implements ApiBooktrackingSubservice {
       if (response.statusCode == 200) {
         return ApiResponse(
           status: ResponseStatus.ok,
-          data: (response.data["data"] as List<dynamic>)
+          data: (response.data["datas"] as List<dynamic>)
               .map((json) => BookTrackingDataWithBookData.fromJson(json))
               .toList(),
         );
