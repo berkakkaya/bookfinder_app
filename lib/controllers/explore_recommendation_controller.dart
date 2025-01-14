@@ -75,6 +75,14 @@ class ExploreRecommendationController {
       }
     }
 
+    if (_recommendations.isEmpty) {
+      LoggingServiceProvider.i.error(
+        "Recommendation fetch returned no recommendations",
+      );
+
+      return null;
+    }
+
     final recommendation = _recommendations.removeAt(0);
 
     if (_recommendations.length < 5 && !_fetchOngoing) {
