@@ -41,7 +41,7 @@ class _ExploreTabState extends State<ExploreTab> {
                       ? convertBookCategoryToDisplayStr(
                           recommendationController.selectedCategory!,
                         )
-                      : "Kategori Seç",
+                      : "Kişiselleştirilmiş Akış",
                 ),
                 avatar: Icon(Icons.filter_alt_outlined),
                 onPressed: changeCategoryFilter,
