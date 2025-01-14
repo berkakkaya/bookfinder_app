@@ -134,35 +134,49 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
           children: [
-            Hero(
-              tag: "searchField",
-              child: Material(
-                color: Colors.transparent,
-                child: TextField(
-                  focusNode: widget.searchFieldFocusNode,
-                  decoration: InputDecoration(
-                    hintText: "Bir kitap arayın",
-                    prefixIcon: const Icon(Icons.search_rounded),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    suffixIcon: isSearching
-                        ? Padding(
-                            padding: const EdgeInsets.only(right: 16),
-                            child: const CircularProgressIndicator(),
-                          )
-                        : null,
-                    suffixIconConstraints: const BoxConstraints(
-                      maxHeight: 16,
-                      maxWidth: 32,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.max,
+              spacing: 16,
+              children: [
+                Expanded(
+                  child: Hero(
+                    tag: "searchField",
+                    child: Material(
+                      color: Colors.transparent,
+                      child: TextField(
+                        focusNode: widget.searchFieldFocusNode,
+                        decoration: InputDecoration(
+                          hintText: "Bir kitap arayın",
+                          prefixIcon: const Icon(Icons.search_rounded),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          suffixIcon: isSearching
+                              ? Padding(
+                                  padding: const EdgeInsets.only(right: 16),
+                                  child: const CircularProgressIndicator(),
+                                )
+                              : null,
+                          suffixIconConstraints: const BoxConstraints(
+                            maxHeight: 16,
+                            maxWidth: 32,
+                          ),
+                        ),
+                        onTapOutside: (event) {
+                          widget.searchFieldFocusNode.unfocus();
+                        },
+                        onChanged: _onSearchFieldChanged,
+                      ),
                     ),
                   ),
-                  onTapOutside: (event) {
-                    widget.searchFieldFocusNode.unfocus();
-                  },
-                  onChanged: _onSearchFieldChanged,
                 ),
-              ),
+                CachedNetworkImage(
+                  height: 24,
+                  imageUrl:
+                      "https://books.google.com/googlebooks/images/poweredby.png",
+                ),
+              ],
             ),
             const SizedBox(height: 32),
             content,

@@ -143,11 +143,23 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                   ],
                 ),
                 SizedBox(height: 48),
-                Text(
-                  "Kitap Açıklaması",
-                  style: context.theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Kitap Açıklaması",
+                      style: context.theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    CachedNetworkImage(
+                      height: 24,
+                      imageUrl:
+                          "https://books.google.com/googlebooks/images/poweredby.png",
+                    ),
+                  ],
                 ),
                 SizedBox(height: 16),
                 Text(
