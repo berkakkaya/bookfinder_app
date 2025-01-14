@@ -231,6 +231,10 @@ class _BookRecommendationSubpageState extends State<BookRecommendationSubpage>
   }
 
   Future<void> likeRecommendation(BookRecommendation recommendation) async {
+    setState(() {
+      isLiked = true;
+    });
+
     final response = await withAuth((authHeader) {
       return ApiServiceProvider.i.library.addBookToList(
         "_likedBooks",
@@ -249,19 +253,21 @@ class _BookRecommendationSubpageState extends State<BookRecommendationSubpage>
           "Kitap beğenilirken bir hata meydana geldi.",
           type: SnackbarType.error,
         );
+
+        setState(() {
+          isLiked = false;
+        });
       }
 
       return;
     }
-
-    if (mounted) {
-      setState(() {
-        isLiked = true;
-      });
-    }
   }
 
   Future<void> unlikeRecommendation(BookRecommendation recommendation) async {
+    setState(() {
+      isLiked = false;
+    });
+
     final response = await withAuth((authHeader) {
       return ApiServiceProvider.i.library.removeBookFromList(
         "_likedBooks",
@@ -283,15 +289,13 @@ class _BookRecommendationSubpageState extends State<BookRecommendationSubpage>
           "Kitap beğenisi kaldırılırken bir hata meydana geldi.",
           type: SnackbarType.error,
         );
+
+        setState(() {
+          isLiked = true;
+        });
       }
 
       return;
-    }
-
-    if (mounted) {
-      setState(() {
-        isLiked = false;
-      });
     }
   }
 
