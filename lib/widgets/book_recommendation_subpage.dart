@@ -110,7 +110,7 @@ class _BookRecommendationSubpageState extends State<BookRecommendationSubpage>
                 ),
               ),
               Spacer(),
-              SizedBox(height: 32),
+              SizedBox(height: 12),
               Row(
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.center,
