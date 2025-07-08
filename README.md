@@ -53,11 +53,11 @@ lib/
 ├── exceptions/          # Custom exceptions and error handling
 ├── extensions/          # Dart extensions for utility functions
 ├── interfaces/          # Abstract interfaces and contracts
-├── models/             # Data models and DTOs
-├── screens/            # UI screens and pages
-├── services/           # Business services (API, preferences, logging)
-├── utils/              # Utility functions
-└── widgets/            # Reusable UI components
+├── models/              # Data models and DTOs
+├── screens/             # UI screens and pages
+├── services/            # Business services (API, preferences, logging)
+├── utils/               # Utility functions
+└── widgets/             # Reusable UI components
 ```
 
 ### Key Components
@@ -121,7 +121,7 @@ The app will prompt for API base URL on first launch if connecting to a real bac
 
 ### Main Navigation Tabs
 - **🏠 Home**: Book recommendations and feed
-- **🔍 Search**: Book search functionality
+- **🔍 Explore**: Find new books based on your preferences
 - **📚 Library**: Your book lists and tracked books
 - **👤 Profile**: User profile and settings
 
