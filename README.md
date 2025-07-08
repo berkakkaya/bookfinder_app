@@ -2,6 +2,8 @@
 
 A comprehensive book discovery and tracking mobile application built with Flutter. Discover new books, track your reading progress, create custom book lists, and connect with other book lovers.
 
+[Repository for the Server Software](https://github.com/berkakkaya/bookfinder_server)
+
 ![Repo Banner](./github/repo_banner.png)
 
 ## ✨ Features
