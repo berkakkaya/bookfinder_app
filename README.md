@@ -183,14 +183,6 @@ The app will prompt for API base URL on first launch if connecting to a real bac
 - **Error States**: Helpful error messages and retry options
 - **Empty States**: Engaging empty state designs
 
-## 📝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Write tests if applicable
-5. Submit a pull request
-
 ## 📄 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
